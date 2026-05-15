@@ -1,0 +1,9 @@
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\bin\Release\net8.0\PendriveRescue.Domain.deps.json
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\bin\Release\net8.0\PendriveRescue.Domain.dll
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\obj\Release\net8.0\PendriveRescue.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\obj\Release\net8.0\PendriveRescue.Domain.AssemblyInfoInputs.cache
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\obj\Release\net8.0\PendriveRescue.Domain.AssemblyInfo.cs
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\obj\Release\net8.0\PendriveRescue.Domain.csproj.CoreCompileInputs.cache
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\obj\Release\net8.0\PendriveRescue.Domain.dll
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\obj\Release\net8.0\refint\PendriveRescue.Domain.dll
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\obj\Release\net8.0\ref\PendriveRescue.Domain.dll

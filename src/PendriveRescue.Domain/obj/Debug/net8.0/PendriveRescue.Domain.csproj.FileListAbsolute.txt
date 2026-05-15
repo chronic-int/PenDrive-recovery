@@ -1,0 +1,22 @@
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\bin\Debug\net8.0\PendriveRescue.Domain.deps.json
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\bin\Debug\net8.0\PendriveRescue.Domain.dll
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\bin\Debug\net8.0\PendriveRescue.Domain.pdb
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\obj\Debug\net8.0\PendriveRescue.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\obj\Debug\net8.0\PendriveRescue.Domain.AssemblyInfoInputs.cache
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\obj\Debug\net8.0\PendriveRescue.Domain.AssemblyInfo.cs
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\obj\Debug\net8.0\PendriveRescue.Domain.csproj.CoreCompileInputs.cache
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\obj\Debug\net8.0\PendriveRescue.Domain.dll
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\obj\Debug\net8.0\refint\PendriveRescue.Domain.dll
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\obj\Debug\net8.0\PendriveRescue.Domain.pdb
+D:\projects\PenDrive recovery\src\PendriveRescue.Domain\obj\Debug\net8.0\ref\PendriveRescue.Domain.dll
+C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\d1fe5fee22254bc3\src\PendriveRescue.Domain\bin\Debug\net8.0\PendriveRescue.Domain.deps.json
+C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\d1fe5fee22254bc3\src\PendriveRescue.Domain\bin\Debug\net8.0\PendriveRescue.Domain.dll
+C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\d1fe5fee22254bc3\src\PendriveRescue.Domain\bin\Debug\net8.0\PendriveRescue.Domain.pdb
+C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\d1fe5fee22254bc3\src\PendriveRescue.Domain\obj\Debug\net8.0\PendriveRescue.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\d1fe5fee22254bc3\src\PendriveRescue.Domain\obj\Debug\net8.0\PendriveRescue.Domain.AssemblyInfoInputs.cache
+C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\d1fe5fee22254bc3\src\PendriveRescue.Domain\obj\Debug\net8.0\PendriveRescue.Domain.AssemblyInfo.cs
+C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\d1fe5fee22254bc3\src\PendriveRescue.Domain\obj\Debug\net8.0\PendriveRescue.Domain.csproj.CoreCompileInputs.cache
+C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\d1fe5fee22254bc3\src\PendriveRescue.Domain\obj\Debug\net8.0\PendriveRescue.Domain.dll
+C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\d1fe5fee22254bc3\src\PendriveRescue.Domain\obj\Debug\net8.0\refint\PendriveRescue.Domain.dll
+C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\d1fe5fee22254bc3\src\PendriveRescue.Domain\obj\Debug\net8.0\PendriveRescue.Domain.pdb
+C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\d1fe5fee22254bc3\src\PendriveRescue.Domain\obj\Debug\net8.0\ref\PendriveRescue.Domain.dll

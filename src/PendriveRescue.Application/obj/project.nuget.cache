@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "itrCJEznXbQ=",
+  "success": true,
+  "projectFilePath": "D:\\projects\\PenDrive recovery\\src\\PendriveRescue.Application\\PendriveRescue.Application.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Chronus\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.25\\microsoft.net.illink.tasks.8.0.25.nupkg.sha512"
+  ],
+  "logs": []
+}
