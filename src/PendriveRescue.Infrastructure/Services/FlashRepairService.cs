@@ -39,6 +39,12 @@ public class FlashRepairService : IFlashRepairService
         var fileSystem = NormalizeFileSystem(options.FileSystem);
         var label = NormalizeLabel(options.Label);
         var quick = options.QuickFormat ? " quick" : string.Empty;
+        var limitFat32Partition = fileSystem == "fat32" &&
+                                  options.LimitFat32PartitionForCompatibility &&
+                                  device.TotalBytes > FlashRepairOptions.Fat32CompatibilityThresholdBytes;
+        var createPartition = limitFat32Partition
+            ? $"create partition primary size={FlashRepairOptions.Fat32CompatibilityPartitionSizeMegabytes}"
+            : "create partition primary";
 
         return string.Join(Environment.NewLine, new[]
         {
@@ -47,7 +53,7 @@ public class FlashRepairService : IFlashRepairService
             "online disk",
             "clean",
             "convert mbr",
-            "create partition primary",
+            createPartition,
             $"format fs={fileSystem}{quick} label=\"{label}\"",
             "assign",
             "exit",

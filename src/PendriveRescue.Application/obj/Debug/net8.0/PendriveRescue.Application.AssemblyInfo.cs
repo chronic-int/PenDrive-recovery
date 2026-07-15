@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PendriveRescue.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+647cae4870b5726f1ecece5b6943a7970032fb4b")]
 [assembly: System.Reflection.AssemblyProductAttribute("PendriveRescue.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PendriveRescue.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

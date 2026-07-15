@@ -1,1 +1,5 @@
+D:\projects\PenDrive recovery\publish-updated\PendriveRescue.App.pdb
+D:\projects\PenDrive recovery\publish-updated\PendriveRescue.Domain.pdb
+D:\projects\PenDrive recovery\publish-updated\PendriveRescue.Application.pdb
+D:\projects\PenDrive recovery\publish-updated\PendriveRescue.Infrastructure.pdb
 D:\projects\PenDrive recovery\publish-updated\PendriveRescue.App.exe

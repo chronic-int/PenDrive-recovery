@@ -51,4 +51,52 @@ public class FlashRepairServiceTests
 
         Assert.Throws<InvalidOperationException>(() => FlashRepairService.ValidateRepairTarget(device));
     }
+
+    [Fact]
+    public void BuildRepairScript_PrinterProfileUsesLimitedFat32PartitionOnLargeDrive()
+    {
+        var device = new StorageDevice
+        {
+            DiskNumber = 3,
+            IsRemovable = true,
+            PhysicalPath = @"\\.\PHYSICALDRIVE3",
+            TotalBytes = 64_000_000_000
+        };
+
+        var script = FlashRepairService.BuildRepairScript(
+            device,
+            new FlashRepairOptions
+            {
+                FileSystem = "fat32",
+                LimitFat32PartitionForCompatibility = true
+            });
+
+        Assert.Contains("convert mbr", script);
+        Assert.Contains("create partition primary size=30000", script);
+        Assert.Contains("format fs=fat32 quick", script);
+    }
+
+    [Fact]
+    public void BuildRepairScript_PrinterProfileUsesFullDriveWhenAlreadyUnderLimit()
+    {
+        var device = new StorageDevice
+        {
+            DiskNumber = 3,
+            IsRemovable = true,
+            PhysicalPath = @"\\.\PHYSICALDRIVE3",
+            TotalBytes = 16_000_000_000
+        };
+
+        var script = FlashRepairService.BuildRepairScript(
+            device,
+            new FlashRepairOptions
+            {
+                FileSystem = "fat32",
+                LimitFat32PartitionForCompatibility = true
+            });
+
+        Assert.Contains("create partition primary", script);
+        Assert.DoesNotContain("create partition primary size=", script);
+        Assert.Contains("format fs=fat32 quick", script);
+    }
 }

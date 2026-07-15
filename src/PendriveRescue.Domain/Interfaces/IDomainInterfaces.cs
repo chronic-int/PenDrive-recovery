@@ -54,6 +54,51 @@ public interface ISafeFlashRepairService
     Task<SafeRepairResult> TryRepairAsync(StorageDevice device, CancellationToken cancellationToken, IProgress<double> progress);
 }
 
+/// <summary>
+/// Removes common shortcut-virus artefacts from a mounted USB drive and restores normal file visibility.
+/// </summary>
+public interface IUsbMalwareCleanupService
+{
+    Task<UsbCleanupResult> CleanAsync(
+        StorageDevice device,
+        UsbCleanupOptions options,
+        CancellationToken cancellationToken,
+        IProgress<double> progress);
+}
+
+/// <summary>
+/// Manages a removable-drive AutoRun blocker that prevents an autorun.inf file from being created by common USB malware.
+/// </summary>
+public interface IUsbProtectionService
+{
+    Task<bool> IsProtectedAsync(StorageDevice device, CancellationToken cancellationToken);
+
+    Task<UsbProtectionResult> EnableAsync(
+        StorageDevice device,
+        CancellationToken cancellationToken,
+        IProgress<double> progress);
+
+    Task<UsbProtectionResult> DisableAsync(
+        StorageDevice device,
+        CancellationToken cancellationToken,
+        IProgress<double> progress);
+}
+
+/// <summary>
+/// Runs Microsoft Defender scans without executing any content from the selected USB drive.
+/// </summary>
+public interface IMalwareScanService
+{
+    Task<MalwareScanResult> ScanUsbAsync(
+        StorageDevice device,
+        CancellationToken cancellationToken,
+        IProgress<double> progress);
+
+    Task<MalwareScanResult> ScanComputerAsync(
+        CancellationToken cancellationToken,
+        IProgress<double> progress);
+}
+
 public interface IReportService
 {
     Task<bool> ExportReportAsync(ScanResult result, string filePath);

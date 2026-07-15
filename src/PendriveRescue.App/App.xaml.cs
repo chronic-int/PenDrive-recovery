@@ -59,14 +59,21 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IRecoveryService, RecoveryService>();
         services.AddSingleton<IFlashRepairService, FlashRepairService>();
         services.AddSingleton<ISafeFlashRepairService, SafeFlashRepairService>();
+        services.AddSingleton<IUsbMalwareCleanupService, UsbMalwareCleanupService>();
+        services.AddSingleton<IUsbProtectionService, UsbProtectionService>();
+        services.AddSingleton<IMalwareScanService, MicrosoftDefenderScanService>();
         services.AddSingleton<IReportService, ReportService>();
         services.AddSingleton<IFolderPicker, WindowsFolderPicker>();
         services.AddTransient<AnalyzeDeviceUseCase>();
+        services.AddTransient<RefreshStorageDevicesUseCase>();
         services.AddTransient<RunQuickScanUseCase>();
         services.AddTransient<RunDeepScanUseCase>();
         services.AddTransient<RecoverFilesUseCase>();
         services.AddTransient<RepairFlashDriveUseCase>();
         services.AddTransient<TrySafeRepairUseCase>();
+        services.AddTransient<CleanUsbMalwareArtifactsUseCase>();
+        services.AddTransient<ProtectUsbDriveUseCase>();
+        services.AddTransient<RunMalwareScanUseCase>();
         services.AddTransient<ExportReportUseCase>();
 
         services.AddTransient<MainViewModel>();

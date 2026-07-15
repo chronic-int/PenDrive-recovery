@@ -28,3 +28,4 @@ C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\d1fe5fee22254bc3\src\PendriveRe
 C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\d1fe5fee22254bc3\src\PendriveRescue.Infrastructure\obj\Debug\net8.0\refint\PendriveRescue.Infrastructure.dll
 C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\d1fe5fee22254bc3\src\PendriveRescue.Infrastructure\obj\Debug\net8.0\PendriveRescue.Infrastructure.pdb
 C:\Users\CodexSandboxOffline\.codex\.sandbox\cwd\d1fe5fee22254bc3\src\PendriveRescue.Infrastructure\obj\Debug\net8.0\ref\PendriveRescue.Infrastructure.dll
+D:\projects\PenDrive recovery\src\PendriveRescue.Infrastructure\obj\Debug\net8.0\PendriveRescue.Infrastructure.sourcelink.json

@@ -10,3 +10,7 @@ D:\projects\PenDrive recovery\src\PendriveRescue.Application\obj\Release\net8.0\
 D:\projects\PenDrive recovery\src\PendriveRescue.Application\obj\Release\net8.0\PendriveRescue.Application.dll
 D:\projects\PenDrive recovery\src\PendriveRescue.Application\obj\Release\net8.0\refint\PendriveRescue.Application.dll
 D:\projects\PenDrive recovery\src\PendriveRescue.Application\obj\Release\net8.0\ref\PendriveRescue.Application.dll
+D:\projects\PenDrive recovery\src\PendriveRescue.Application\bin\Release\net8.0\PendriveRescue.Application.pdb
+D:\projects\PenDrive recovery\src\PendriveRescue.Application\bin\Release\net8.0\PendriveRescue.Domain.pdb
+D:\projects\PenDrive recovery\src\PendriveRescue.Application\obj\Release\net8.0\PendriveRescue.Application.sourcelink.json
+D:\projects\PenDrive recovery\src\PendriveRescue.Application\obj\Release\net8.0\PendriveRescue.Application.pdb

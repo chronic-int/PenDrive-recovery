@@ -13,3 +13,4 @@ D:\projects\PenDrive recovery\src\PendriveRescue.Application\obj\Debug\net8.0\Pe
 D:\projects\PenDrive recovery\src\PendriveRescue.Application\obj\Debug\net8.0\refint\PendriveRescue.Application.dll
 D:\projects\PenDrive recovery\src\PendriveRescue.Application\obj\Debug\net8.0\PendriveRescue.Application.pdb
 D:\projects\PenDrive recovery\src\PendriveRescue.Application\obj\Debug\net8.0\ref\PendriveRescue.Application.dll
+D:\projects\PenDrive recovery\src\PendriveRescue.Application\obj\Debug\net8.0\PendriveRescue.Application.sourcelink.json

@@ -33,3 +33,9 @@ D:\projects\PenDrive recovery\src\PendriveRescue.App\obj\Release\net8.0-windows\
 D:\projects\PenDrive recovery\src\PendriveRescue.App\obj\Release\net8.0-windows\win-x64\refint\PendriveRescue.App.dll
 D:\projects\PenDrive recovery\src\PendriveRescue.App\obj\Release\net8.0-windows\win-x64\PendriveRescue.App.genruntimeconfig.cache
 D:\projects\PenDrive recovery\src\PendriveRescue.App\obj\Release\net8.0-windows\win-x64\ref\PendriveRescue.App.dll
+D:\projects\PenDrive recovery\src\PendriveRescue.App\bin\Release\net8.0-windows\win-x64\PendriveRescue.App.pdb
+D:\projects\PenDrive recovery\src\PendriveRescue.App\bin\Release\net8.0-windows\win-x64\PendriveRescue.Domain.pdb
+D:\projects\PenDrive recovery\src\PendriveRescue.App\bin\Release\net8.0-windows\win-x64\PendriveRescue.Application.pdb
+D:\projects\PenDrive recovery\src\PendriveRescue.App\bin\Release\net8.0-windows\win-x64\PendriveRescue.Infrastructure.pdb
+D:\projects\PenDrive recovery\src\PendriveRescue.App\obj\Release\net8.0-windows\win-x64\PendriveRescue.App.sourcelink.json
+D:\projects\PenDrive recovery\src\PendriveRescue.App\obj\Release\net8.0-windows\win-x64\PendriveRescue.App.pdb

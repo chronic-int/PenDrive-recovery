@@ -56,6 +56,8 @@
             <Setter Property="Padding" Value="16,7" />
             <Setter Property="Margin" Value="0,0,10,10" />
             <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
             <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
             <Setter Property="Background" Value="#F8FAFC" />
             <Setter Property="BorderBrush" Value="#CBD5DF" />
@@ -92,6 +94,33 @@
             <Setter Property="Foreground" Value="White" />
             <Setter Property="Background" Value="{StaticResource AccentBrush}" />
             <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource AccentDarkBrush}" />
+                                <Setter Property="BorderBrush" Value="{StaticResource AccentDarkBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.68" />
+                                <Setter Property="Foreground" Value="#8895A5" />
+                                <Setter Property="Background" Value="#E9EEF3" />
+                                <Setter Property="BorderBrush" Value="#D4DDE5" />
+                                <Setter Property="Cursor" Value="Arrow" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style x:Key="DangerButton" BasedOn="{StaticResource CommandButton}" TargetType="Button">
@@ -99,6 +128,32 @@
             <Setter Property="Background" Value="{StaticResource DangerBrush}" />
             <Setter Property="BorderBrush" Value="{StaticResource DangerDarkBrush}" />
             <Setter Property="MinWidth" Value="128" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Margin="{TemplateBinding Padding}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{StaticResource DangerDarkBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.68" />
+                                <Setter Property="Foreground" Value="#8895A5" />
+                                <Setter Property="Background" Value="#E9EEF3" />
+                                <Setter Property="BorderBrush" Value="#D4DDE5" />
+                                <Setter Property="Cursor" Value="Arrow" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style TargetType="TextBox">
@@ -107,6 +162,59 @@
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="BorderBrush" Value="#CBD5DF" />
             <Setter Property="Background" Value="#FBFCFE" />
+        </Style>
+
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="CheckChrome"
+                                    Width="17"
+                                    Height="17"
+                                    Background="White"
+                                    BorderBrush="#AEBBC7"
+                                    BorderThickness="1"
+                                    CornerRadius="3"
+                                    VerticalAlignment="Center">
+                                <TextBlock x:Name="CheckGlyph"
+                                           Text="&#xE73E;"
+                                           FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets"
+                                           FontSize="11"
+                                           Foreground="White"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Visibility="Collapsed" />
+                            </Border>
+                            <ContentPresenter Grid.Column="1"
+                                              Margin="8,0,0,0"
+                                              VerticalAlignment="Center" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="CheckChrome" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="CheckChrome" Property="Background" Value="{StaticResource AccentBrush}" />
+                                <Setter TargetName="CheckChrome" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter TargetName="CheckGlyph" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.55" />
+                                <Setter Property="Cursor" Value="Arrow" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
         <Style TargetType="DataGrid">
@@ -125,6 +233,112 @@
             <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
             <Setter Property="EnableRowVirtualization" Value="True" />
             <Setter Property="EnableColumnVirtualization" Value="True" />
+        </Style>
+
+        <Style x:Key="WorkflowTabControl" TargetType="TabControl">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabControl">
+                        <Grid KeyboardNavigation.TabNavigation="Local">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Border HorizontalAlignment="Left"
+                                    Background="#F2F5F8"
+                                    CornerRadius="7"
+                                    Padding="4">
+                                <TabPanel IsItemsHost="True"
+                                          KeyboardNavigation.TabIndex="1"
+                                          Panel.ZIndex="1" />
+                            </Border>
+                            <ContentPresenter x:Name="PART_SelectedContentHost"
+                                              Grid.Row="1"
+                                              ContentSource="SelectedContent"
+                                              KeyboardNavigation.TabIndex="2" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="TaskTabItem" TargetType="TabItem">
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="MinWidth" Value="126" />
+            <Setter Property="Padding" Value="14,9" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="TabChrome"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                BorderThickness="1"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <StackPanel Orientation="Horizontal"
+                                        HorizontalAlignment="Center">
+                                <TextBlock Text="{TemplateBinding Tag}"
+                                           FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets"
+                                           FontSize="15"
+                                           Margin="0,0,8,0"
+                                           VerticalAlignment="Center" />
+                                <ContentPresenter ContentSource="Header"
+                                                  RecognizesAccessKey="True"
+                                                  VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="TabChrome" Property="Background" Value="#E7EEF3" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource AccentDarkBrush}" />
+                                <Setter TargetName="TabChrome" Property="Background" Value="White" />
+                                <Setter TargetName="TabChrome" Property="BorderBrush" Value="#CAD7E1" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ProfileRadio" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border x:Name="ProfileChrome"
+                                Background="#F8FAFC"
+                                BorderBrush="#CAD5DF"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ProfileChrome" Property="Background" Value="#EEF4F7" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="ProfileChrome" Property="Background" Value="#E5F2F5" />
+                                <Setter TargetName="ProfileChrome" Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                                <Setter Property="Foreground" Value="{StaticResource AccentDarkBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Window.Resources>
 
@@ -160,6 +374,7 @@
                 <Button Content="Cancel"
                         Style="{StaticResource CommandButton}"
                         Command="{Binding CancelCommand}"
+                        Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}"
                         Margin="0,0,0,10" />
             </StackPanel>
         </Grid>
@@ -361,81 +576,200 @@
                     </Grid>
                 </Border>
 
-                <Border Grid.Row="1" Style="{StaticResource Card}" Margin="0,0,0,14" Padding="16">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="260" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
+                <Border Grid.Row="1" Style="{StaticResource Card}" Margin="0,0,0,14" Padding="16,12,16,14">
+                    <TabControl Style="{StaticResource WorkflowTabControl}"
+                                MinHeight="196">
+                        <TabItem Header="Recovery"
+                                 Tag="&#xE8B7;"
+                                 Style="{StaticResource TaskTabItem}">
+                            <Grid Margin="0,16,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1.05*" />
+                                    <ColumnDefinition Width="1" />
+                                    <ColumnDefinition Width="1.15*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Margin="0,0,20,0">
+                                    <TextBlock Text="Find and recover"
+                                               Foreground="{StaticResource InkBrush}"
+                                               FontWeight="SemiBold"
+                                               FontSize="14" />
+                                    <TextBlock Text="{Binding FoundCount, StringFormat={}{0} candidate files in the current results}"
+                                               Foreground="{StaticResource MutedBrush}"
+                                               FontSize="12"
+                                               Margin="0,3,0,10" />
+                                    <WrapPanel>
+                                        <Button Content="Analyze"
+                                                Style="{StaticResource CommandButton}"
+                                                Command="{Binding AnalyzeProblemCommand}" />
+                                        <Button Content="Quick Scan"
+                                                Style="{StaticResource CommandButton}"
+                                                Command="{Binding QuickScanCommand}" />
+                                        <Button Content="Deep Scan"
+                                                Style="{StaticResource PrimaryButton}"
+                                                Command="{Binding DeepScanCommand}" />
+                                        <Button Content="Recover Files..."
+                                                Style="{StaticResource PrimaryButton}"
+                                                Command="{Binding RecoverFilesCommand}" />
+                                    </WrapPanel>
+                                </StackPanel>
+                                <Border Grid.Column="1" Background="{StaticResource BorderBrushSoft}" />
+                                <Grid Grid.Column="2" Margin="20,0,0,0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBlock Text="Recovery destination"
+                                               Foreground="{StaticResource InkBrush}"
+                                               FontWeight="SemiBold"
+                                               FontSize="14" />
+                                    <Grid Grid.Row="1" Margin="0,10,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox Text="{Binding DestinationPath, UpdateSourceTrigger=PropertyChanged}" />
+                                        <Button Grid.Column="1"
+                                                Content="Browse"
+                                                Style="{StaticResource CommandButton}"
+                                                Command="{Binding BrowseDestinationCommand}"
+                                                Margin="10,0,0,0" />
+                                    </Grid>
+                                    <Button Grid.Row="2"
+                                            Content="Recover selected"
+                                            Style="{StaticResource PrimaryButton}"
+                                            Command="{Binding RecoverSelectedCommand}"
+                                            HorizontalAlignment="Left"
+                                            Margin="0,10,0,0" />
+                                </Grid>
+                            </Grid>
+                        </TabItem>
 
-                        <TextBlock Text="Workflow" Style="{StaticResource SectionTitle}" Margin="0,0,0,12" />
-                        <WrapPanel Grid.Row="1">
-                            <Button Content="Analyze Problem"
-                                    Style="{StaticResource CommandButton}"
-                                    Command="{Binding AnalyzeProblemCommand}" />
-                            <Button Content="Quick Scan"
-                                    Style="{StaticResource CommandButton}"
-                                    Command="{Binding QuickScanCommand}" />
-                            <Button Content="Deep Scan"
-                                    Style="{StaticResource PrimaryButton}"
-                                    Command="{Binding DeepScanCommand}" />
-                            <Button Content="Recover Files..."
-                                    Style="{StaticResource PrimaryButton}"
-                                    Command="{Binding RecoverFilesCommand}" />
-                            <Button Content="Select All"
-                                    Style="{StaticResource CommandButton}"
-                                    Command="{Binding SelectAllFilesCommand}" />
-                            <Button Content="Clear"
-                                    Style="{StaticResource CommandButton}"
-                                    Command="{Binding ClearFileSelectionCommand}" />
-                            <Button Content="Export Report"
-                                    Style="{StaticResource CommandButton}"
-                                    Command="{Binding ExportReportCommand}" />
-                        </WrapPanel>
+                        <TabItem Header="Repair"
+                                 Tag="&#xE90F;"
+                                 Style="{StaticResource TaskTabItem}">
+                            <Grid Margin="0,16,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="0.9*" />
+                                    <ColumnDefinition Width="1" />
+                                    <ColumnDefinition Width="1.25*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Margin="0,0,20,0">
+                                    <TextBlock Text="Maintenance"
+                                               Foreground="{StaticResource InkBrush}"
+                                               FontWeight="SemiBold"
+                                               FontSize="14" />
+                                    <WrapPanel Margin="0,10,0,0">
+                                        <Button Content="Normalize USB"
+                                                Style="{StaticResource PrimaryButton}"
+                                                Command="{Binding CleanUsbMalwareArtifactsCommand}" />
+                                        <Button Content="Safe Repair"
+                                                Style="{StaticResource CommandButton}"
+                                                Command="{Binding TrySafeRepairCommand}" />
+                                        <Button Content="Erase and Repair"
+                                                Style="{StaticResource DangerButton}"
+                                                Command="{Binding RepairFlashDriveCommand}" />
+                                    </WrapPanel>
+                                </StackPanel>
+                                <Border Grid.Column="1" Background="{StaticResource BorderBrushSoft}" />
+                                <StackPanel Grid.Column="2" Margin="20,0,0,0">
+                                    <TextBlock Text="Erase format profile"
+                                               Foreground="{StaticResource InkBrush}"
+                                               FontWeight="SemiBold"
+                                               FontSize="14" />
+                                    <WrapPanel Margin="0,9,0,0">
+                                        <RadioButton Content="Full capacity (exFAT)"
+                                                     GroupName="RepairProfile"
+                                                     Style="{StaticResource ProfileRadio}"
+                                                     IsChecked="{Binding UseModernFullCapacityFormat}" />
+                                        <RadioButton Content="Printers / devices (FAT32)"
+                                                     GroupName="RepairProfile"
+                                                     Style="{StaticResource ProfileRadio}"
+                                                     IsChecked="{Binding UsePrinterCompatibilityFormat}" />
+                                    </WrapPanel>
+                                    <TextBlock Text="{Binding RepairFormatSummary}"
+                                               Foreground="{StaticResource MutedBrush}"
+                                               FontSize="11"
+                                               TextWrapping="Wrap"
+                                               Margin="0,4,0,0" />
+                                </StackPanel>
+                                <StackPanel Grid.Row="1"
+                                            Grid.ColumnSpan="3"
+                                            Orientation="Horizontal"
+                                            Margin="0,14,0,0">
+                                    <CheckBox Content="Scan with Microsoft Defender"
+                                              IsChecked="{Binding ScanWithDefenderDuringNormalize}"
+                                              Foreground="{StaticResource InkBrush}"
+                                              VerticalAlignment="Center"
+                                              Margin="0,0,24,0"
+                                              ToolTip="Runs a Defender computer quick scan, then scans the USB before and after cleanup" />
+                                    <CheckBox Content="Enable AutoRun blocker after Normalize"
+                                              IsChecked="{Binding ProtectAfterNormalize}"
+                                              Foreground="{StaticResource InkBrush}"
+                                              VerticalAlignment="Center"
+                                              ToolTip="Creates a basic autorun.inf blocker after cleanup. It cannot stop an infected computer from writing other files." />
+                                </StackPanel>
+                            </Grid>
+                        </TabItem>
 
-                        <TextBlock Grid.Column="1"
-                                   Text="Repair"
-                                   Style="{StaticResource SectionTitle}"
-                                   Margin="0,0,0,12" />
-                        <WrapPanel Grid.Row="1" Grid.Column="1">
-                            <Button Content="Try Safe Repair"
-                                    Style="{StaticResource CommandButton}"
-                                    Command="{Binding TrySafeRepairCommand}" />
-                            <Button Content="Erase and Repair"
-                                    Style="{StaticResource DangerButton}"
-                                    Command="{Binding RepairFlashDriveCommand}" />
-                        </WrapPanel>
-
-                        <Grid Grid.Row="2" Grid.ColumnSpan="2" Margin="0,12,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="Destination"
-                                       VerticalAlignment="Center"
-                                       Margin="0,0,12,0"
-                                       Foreground="{StaticResource MutedBrush}" />
-                            <TextBox Grid.Column="1"
-                                     Text="{Binding DestinationPath, UpdateSourceTrigger=PropertyChanged}" />
-                            <Button Grid.Column="2"
-                                    Content="Browse"
-                                    Style="{StaticResource CommandButton}"
-                                    Command="{Binding BrowseDestinationCommand}"
-                                    Margin="10,0,10,0" />
-                            <Button Grid.Column="3"
-                                    Content="Recover to Destination"
-                                    Style="{StaticResource PrimaryButton}"
-                                    Command="{Binding RecoverSelectedCommand}"
-                                    Margin="0" />
-                        </Grid>
-                    </Grid>
+                        <TabItem Header="Protection"
+                                 Tag="&#xEA18;"
+                                 Style="{StaticResource TaskTabItem}">
+                            <Grid Margin="0,16,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="1" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Margin="0,0,20,0">
+                                    <TextBlock Text="Microsoft Defender"
+                                               Foreground="{StaticResource InkBrush}"
+                                               FontWeight="SemiBold"
+                                               FontSize="14" />
+                                    <TextBlock Text="{Binding DefenderStatus}"
+                                               Foreground="{StaticResource MutedBrush}"
+                                               Margin="0,4,0,0"
+                                               TextWrapping="Wrap" />
+                                    <WrapPanel Margin="0,11,0,0">
+                                        <Button Content="Scan USB"
+                                                Style="{StaticResource PrimaryButton}"
+                                                Command="{Binding ScanUsbForMalwareCommand}"
+                                                ToolTip="Scan and remediate the selected USB with Microsoft Defender" />
+                                        <Button Content="Scan this PC"
+                                                Style="{StaticResource CommandButton}"
+                                                Command="{Binding ScanComputerForMalwareCommand}"
+                                                ToolTip="Run a Microsoft Defender Quick Scan on this computer" />
+                                    </WrapPanel>
+                                </StackPanel>
+                                <Border Grid.Column="1" Background="{StaticResource BorderBrushSoft}" />
+                                <StackPanel Grid.Column="2" Margin="20,0,0,0">
+                                    <TextBlock Text="AutoRun blocker"
+                                               Foreground="{StaticResource InkBrush}"
+                                               FontWeight="SemiBold"
+                                               FontSize="14"
+                                               ToolTip="Blocks one common AutoRun technique. It cannot stop malware already running on a computer." />
+                                    <TextBlock Text="{Binding UsbProtectionStatus}"
+                                               Foreground="{StaticResource MutedBrush}"
+                                               Margin="0,4,0,0"
+                                               TextWrapping="Wrap" />
+                                    <WrapPanel Margin="0,11,0,0">
+                                        <Button Content="Enable blocker"
+                                                Style="{StaticResource PrimaryButton}"
+                                                Command="{Binding EnableUsbProtectionCommand}"
+                                                ToolTip="Enable the managed AutoRun blocker" />
+                                        <Button Content="Remove blocker"
+                                                Style="{StaticResource CommandButton}"
+                                                Command="{Binding DisableUsbProtectionCommand}"
+                                                ToolTip="Remove only the blocker created by Pendrive Rescue" />
+                                    </WrapPanel>
+                                </StackPanel>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
                 </Border>
 
                 <Border Grid.Row="2" Style="{StaticResource Card}" MinHeight="300">
@@ -455,10 +789,24 @@
                                            Foreground="{StaticResource MutedBrush}"
                                            Margin="10,4,0,0" />
                             </StackPanel>
-                            <TextBlock Grid.Column="1"
-                                       Text="{Binding SelectedFileCount, StringFormat={}{0} selected}"
-                                       Foreground="{StaticResource MutedBrush}"
-                                       VerticalAlignment="Center" />
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <TextBlock Text="{Binding SelectedFileCount, StringFormat={}{0} selected}"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,12,0" />
+                                <Menu Background="Transparent"
+                                      VerticalAlignment="Center">
+                                    <MenuItem Header="Results">
+                                        <MenuItem Header="Select all"
+                                                  Command="{Binding SelectAllFilesCommand}" />
+                                        <MenuItem Header="Clear selection"
+                                                  Command="{Binding ClearFileSelectionCommand}" />
+                                        <Separator />
+                                        <MenuItem Header="Export report"
+                                                  Command="{Binding ExportReportCommand}" />
+                                    </MenuItem>
+                                </Menu>
+                            </StackPanel>
                         </Grid>
 
                         <Grid Grid.Row="1">

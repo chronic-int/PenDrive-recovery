@@ -1,0 +1,7 @@
+I made Pendrive Rescue, a small Windows tool to help recover files from USB/pendrives before trying repairs.
+
+How it works: select the drive, analyze the problem, run Quick Scan or Deep Scan, recover files to another disk, then repair only after your data is safe.
+
+Repo: https://github.com/chronic-int/PenDrive-recovery
+
+#dotnet #wpf #opensource #datarecovery

@@ -39,3 +39,4 @@ D:\projects\PenDrive recovery\src\PendriveRescue.App\obj\Debug\net8.0-windows\re
 D:\projects\PenDrive recovery\src\PendriveRescue.App\obj\Debug\net8.0-windows\PendriveRescue.App.pdb
 D:\projects\PenDrive recovery\src\PendriveRescue.App\obj\Debug\net8.0-windows\PendriveRescue.App.genruntimeconfig.cache
 D:\projects\PenDrive recovery\src\PendriveRescue.App\obj\Debug\net8.0-windows\ref\PendriveRescue.App.dll
+D:\projects\PenDrive recovery\src\PendriveRescue.App\obj\Debug\net8.0-windows\PendriveRescue.App.sourcelink.json

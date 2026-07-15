@@ -108,3 +108,4 @@ D:\projects\PenDrive recovery\tests\PendriveRescue.Tests\obj\Debug\net8.0\refint
 D:\projects\PenDrive recovery\tests\PendriveRescue.Tests\obj\Debug\net8.0\PendriveRescue.Tests.pdb
 D:\projects\PenDrive recovery\tests\PendriveRescue.Tests\obj\Debug\net8.0\PendriveRescue.Tests.genruntimeconfig.cache
 D:\projects\PenDrive recovery\tests\PendriveRescue.Tests\obj\Debug\net8.0\ref\PendriveRescue.Tests.dll
+D:\projects\PenDrive recovery\tests\PendriveRescue.Tests\obj\Debug\net8.0\PendriveRescue.Tests.sourcelink.json
