@@ -42,7 +42,7 @@ public sealed class SafeRepairResult
 public sealed class UsbCleanupOptions
 {
     public string[] PayloadFolderNames { get; set; } = ["MAyundo"];
-    public string[] SuspiciousRootExecutables { get; set; } = ["Explorer.exe"];
+    public string[] SuspiciousRootExecutables { get; set; } = ["Explorer.exe", "USB-Explorer.exe"];
     public string[] SuspiciousRootFiles { get; set; } = ["explorer", "file.js"];
     public string[] SuspiciousRootDirectories { get; set; } = ["autorun.inf", "Explorer"];
     public string[] SuspiciousRootExtensions { get; set; } =
