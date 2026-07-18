@@ -153,6 +153,22 @@ public class StorageDeviceOperationGuardTests
         Assert.Contains("used by Windows", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Theory]
+    [InlineData("pagefile")]
+    [InlineData("crashdump")]
+    [InlineData("hibernation")]
+    public async Task RevalidateAsync_BlocksOtherWindowsProtectedDisks(string protectedUse)
+    {
+        var selected = CreateDevice(3, "USB\\SOURCE", "E:");
+        selected.ContainsPageFile = protectedUse == "pagefile";
+        selected.ContainsCrashDump = protectedUse == "crashdump";
+        selected.ContainsHibernationFile = protectedUse == "hibernation";
+        var guard = CreateGuard(selected, selected.Identity);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            guard.RevalidateAsync(selected, StorageOperationKind.DestructiveRepair, CancellationToken.None));
+    }
+
     [Fact]
     public async Task RevalidateAsync_BlocksAmbiguousIdentity()
     {
