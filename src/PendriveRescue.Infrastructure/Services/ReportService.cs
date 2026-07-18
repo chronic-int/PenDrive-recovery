@@ -1,4 +1,6 @@
 using System.Text.Json;
+using System.Security.Cryptography;
+using System.Text;
 using PendriveRescue.Domain.Entities;
 using PendriveRescue.Domain.Interfaces;
 
@@ -24,6 +26,8 @@ public class ReportService : IReportService
                 FilesFound = result.FilesFound.Count,
                 result.Errors,
                 DurationSeconds = Math.Round(result.Duration.TotalSeconds, 2),
+                SourceDevice = ToReportIdentity(result.SourceDeviceIdentity),
+                IdentityValidation = ToReportValidation(result.IdentityValidation),
                 Files = result.FilesFound
             };
 
@@ -48,6 +52,9 @@ public class ReportService : IReportService
                 job.DestinationPath,
                 job.ProgressPercentage,
                 job.State,
+                SourceDevice = ToReportIdentity(job.SourceDeviceIdentity),
+                DestinationDevice = ToReportIdentity(job.DestinationDeviceIdentity),
+                IdentityValidation = ToReportValidation(job.IdentityValidation),
                 TotalFiles = job.SourceFiles.Count,
                 RecoveredFiles = job.SourceFiles.Count(file => file.State == Domain.Enums.RecoveryState.Recovered),
                 FailedFiles = job.SourceFiles.Count(file => file.State == Domain.Enums.RecoveryState.Failed),
@@ -62,5 +69,48 @@ public class ReportService : IReportService
         {
             return false;
         }
+    }
+
+    private static object? ToReportIdentity(StorageDeviceIdentity? identity)
+    {
+        if (identity is null)
+        {
+            return null;
+        }
+
+        return new
+        {
+            identity.PhysicalDiskNumber,
+            identity.PhysicalDevicePath,
+            identity.Model,
+            identity.CapacityBytes,
+            identity.BusType,
+            SerialNumberHash = HashSerial(identity.SerialNumber),
+            identity.VolumeGuidPaths,
+            identity.MountPoints
+        };
+    }
+
+    private static object? ToReportValidation(DeviceIdentityValidation? validation)
+    {
+        return validation is null
+            ? null
+            : new
+            {
+                validation.Match,
+                validation.Reason,
+                validation.ValidatedAtUtc
+            };
+    }
+
+    private static string? HashSerial(string? serialNumber)
+    {
+        if (string.IsNullOrWhiteSpace(serialNumber))
+        {
+            return null;
+        }
+
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(serialNumber.Trim()));
+        return Convert.ToHexString(hash)[..12];
     }
 }

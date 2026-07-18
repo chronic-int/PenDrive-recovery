@@ -9,17 +9,29 @@ public class DeepScanService : IDeepScanService
 {
     private readonly IRawReadService _rawReadService;
     private readonly FileCarver _fileCarver;
+    private readonly IStorageDeviceOperationGuard _operationGuard;
 
-    public DeepScanService(IRawReadService rawReadService, FileCarver fileCarver)
+    public DeepScanService(
+        IRawReadService rawReadService,
+        FileCarver fileCarver,
+        IStorageDeviceOperationGuard operationGuard)
     {
         _rawReadService = rawReadService;
         _fileCarver = fileCarver;
+        _operationGuard = operationGuard;
     }
 
     public async Task<ScanResult> ScanAsync(StorageDevice device, CancellationToken cancellationToken, IProgress<double> progress)
     {
+        var validated = await _operationGuard.RevalidateAsync(device, StorageOperationKind.DeepScan, cancellationToken);
+        device = validated.Device;
         var sw = Stopwatch.StartNew();
-        var result = new ScanResult { Type = ScanType.Deep };
+        var result = new ScanResult
+        {
+            Type = ScanType.Deep,
+            SourceDeviceIdentity = device.Identity,
+            IdentityValidation = validated.Validation
+        };
         
         long totalBytes = device.TotalBytes;
         if (totalBytes <= 0) return result; // Invalid device size

@@ -55,4 +55,18 @@ public class SafeFlashRepairServiceTests
 
         Assert.Throws<InvalidOperationException>(() => SafeFlashRepairService.ValidateSafeRepairTarget(device));
     }
+
+    [Fact]
+    public void ValidateSafeRepairTarget_RejectsBootDiskEvenWhenMarkedRemovable()
+    {
+        var device = new StorageDevice
+        {
+            DiskNumber = 2,
+            IsRemovable = true,
+            IsBootDisk = true,
+            PhysicalPath = @"\\.\PHYSICALDRIVE2"
+        };
+
+        Assert.Throws<InvalidOperationException>(() => SafeFlashRepairService.ValidateSafeRepairTarget(device));
+    }
 }

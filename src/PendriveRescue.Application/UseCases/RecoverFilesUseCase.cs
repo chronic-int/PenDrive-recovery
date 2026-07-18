@@ -15,10 +15,10 @@ public sealed class RecoverFilesUseCase
     public Task<RecoveryJob> ExecuteAsync(
         IEnumerable<RecoverableFile> files,
         StorageDevice sourceDevice,
-        string destinationPath,
+        RecoveryDestinationSelection destination,
         CancellationToken cancellationToken,
         IProgress<double> progress)
     {
-        return _recoveryService.RecoverFilesAsync(files, sourceDevice, destinationPath, cancellationToken, progress);
+        return _recoveryService.RecoverFilesAsync(files, sourceDevice, destination, cancellationToken, progress);
     }
 }

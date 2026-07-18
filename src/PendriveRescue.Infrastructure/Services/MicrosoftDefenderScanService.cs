@@ -2,20 +2,36 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using PendriveRescue.Domain.Entities;
+using PendriveRescue.Domain.Enums;
 using PendriveRescue.Domain.Interfaces;
 
 namespace PendriveRescue.Infrastructure.Services;
 
 public sealed class MicrosoftDefenderScanService : IMalwareScanService
 {
-    public Task<MalwareScanResult> ScanUsbAsync(
+    private readonly IStorageDeviceOperationGuard _operationGuard;
+
+    public MicrosoftDefenderScanService(IStorageDeviceOperationGuard operationGuard)
+    {
+        _operationGuard = operationGuard;
+    }
+
+    public async Task<MalwareScanResult> ScanUsbAsync(
         StorageDevice device,
         CancellationToken cancellationToken,
         IProgress<double> progress)
     {
+        var validated = await _operationGuard.RevalidateAsync(
+            device,
+            StorageOperationKind.MalwareScan,
+            cancellationToken);
+        device = validated.Device;
         UsbMalwareCleanupService.ValidateCleanupTarget(device);
         var root = device.DriveLetter.EndsWith('\\') ? device.DriveLetter : device.DriveLetter + "\\";
-        return RunScanAsync(root, isQuickScan: false, cancellationToken, progress);
+        var result = await RunScanAsync(root, isQuickScan: false, cancellationToken, progress);
+        result.TargetIdentity = device.Identity;
+        result.IdentityValidation = validated.Validation;
+        return result;
     }
 
     public Task<MalwareScanResult> ScanComputerAsync(

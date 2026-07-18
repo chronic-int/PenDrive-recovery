@@ -38,7 +38,7 @@ public sealed class RefreshStorageDevicesUseCase
         do
         {
             cancellationToken.ThrowIfCancellationRequested();
-            devices = (await _deviceDetectionService.GetRemovableDevicesAsync())
+            devices = (await _deviceDetectionService.GetRemovableDevicesAsync(cancellationToken))
                 .OrderBy(device => device.DiskNumber)
                 .ThenBy(device => device.DriveLetter)
                 .ToList();
@@ -78,28 +78,12 @@ public sealed class RefreshStorageDevicesUseCase
     {
         var candidateList = candidates.ToList();
 
-        if (!string.IsNullOrWhiteSpace(preferredDevice.PhysicalPath))
-        {
-            return candidateList.FirstOrDefault(candidate =>
-                candidate.PhysicalPath.Equals(preferredDevice.PhysicalPath, StringComparison.OrdinalIgnoreCase));
-        }
-
-        if (preferredDevice.DiskNumber >= 0)
-        {
-            var diskMatch = candidateList.FirstOrDefault(candidate => candidate.DiskNumber == preferredDevice.DiskNumber);
-            if (diskMatch is not null)
-            {
-                return diskMatch;
-            }
-        }
-
-        if (!string.IsNullOrWhiteSpace(preferredDevice.DriveLetter))
-        {
-            return candidateList.FirstOrDefault(candidate =>
-                candidate.DriveLetter.Equals(preferredDevice.DriveLetter, StringComparison.OrdinalIgnoreCase));
-        }
-
-        return null;
+        var matches = candidateList
+            .Where(candidate => StorageDeviceIdentityComparer.Compare(
+                preferredDevice.Identity,
+                candidate.Identity) == DeviceIdentityMatch.Match)
+            .ToList();
+        return matches.Count == 1 ? matches[0] : null;
     }
 
     public static bool IsMountedAndReady(StorageDevice? device)

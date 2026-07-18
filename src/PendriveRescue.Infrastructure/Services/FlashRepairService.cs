@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using PendriveRescue.Domain.Entities;
+using PendriveRescue.Domain.Enums;
 using PendriveRescue.Domain.Interfaces;
 
 namespace PendriveRescue.Infrastructure.Services;
@@ -11,12 +12,24 @@ namespace PendriveRescue.Infrastructure.Services;
 /// </summary>
 public class FlashRepairService : IFlashRepairService
 {
+    private readonly IStorageDeviceOperationGuard _operationGuard;
+
+    public FlashRepairService(IStorageDeviceOperationGuard operationGuard)
+    {
+        _operationGuard = operationGuard;
+    }
+
     public async Task<FlashRepairResult> RepairAsync(
         StorageDevice device,
         FlashRepairOptions options,
         CancellationToken cancellationToken,
         IProgress<double> progress)
     {
+        var validated = await _operationGuard.RevalidateAsync(
+            device,
+            StorageOperationKind.DestructiveRepair,
+            cancellationToken);
+        device = validated.Device;
         ValidateRepairTarget(device);
         progress.Report(5);
 
@@ -24,6 +37,8 @@ public class FlashRepairService : IFlashRepairService
         progress.Report(15);
 
         var result = await RunDiskPartAsync(script, cancellationToken);
+        result.TargetIdentity = device.Identity;
+        result.IdentityValidation = validated.Validation;
         progress.Report(100);
 
         return result;
@@ -79,6 +94,15 @@ public class FlashRepairService : IFlashRepairService
         if (string.IsNullOrWhiteSpace(device.PhysicalPath))
         {
             throw new InvalidOperationException("Repair is blocked because the selected device has no physical disk path.");
+        }
+
+        if (device.IsSystemDisk
+            || device.IsBootDisk
+            || device.ContainsPageFile
+            || device.ContainsCrashDump
+            || device.ContainsHibernationFile)
+        {
+            throw new InvalidOperationException("Repair is blocked because the selected disk contains protected Windows system data.");
         }
     }
 

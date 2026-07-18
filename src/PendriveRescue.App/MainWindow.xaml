@@ -519,6 +519,14 @@
                                                    Foreground="{StaticResource MutedBrush}"
                                                    FontSize="12"
                                                    Margin="0,6,0,0" />
+                                        <TextBlock Foreground="{StaticResource MutedBrush}"
+                                                   FontSize="12"
+                                                   Margin="0,3,0,0"
+                                                   TextWrapping="Wrap">
+                                            <Run Text="{Binding DeviceClassification}" />
+                                            <Run Text=" | Label: " />
+                                            <Run Text="{Binding VolumeLabelDisplay}" />
+                                        </TextBlock>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>
@@ -545,6 +553,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="2*" />
@@ -560,7 +569,7 @@
 
                         <Border Grid.Row="1"
                                 Grid.ColumnSpan="4"
-                                Grid.RowSpan="2"
+                                Grid.RowSpan="3"
                                 Panel.ZIndex="10"
                                 Background="#F8FBFD"
                                 BorderBrush="#D8E0E8"
@@ -611,7 +620,7 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel>
                                 <TextBlock Text="Disk number" Style="{StaticResource LabelText}" />
-                                <TextBlock Text="{Binding SelectedDevice.DiskNumber, TargetNullValue=-}"
+                                <TextBlock Text="{Binding SelectedDevice.DiskNumberDisplay, TargetNullValue=-}"
                                            Style="{StaticResource ValueText}" />
                             </StackPanel>
                             <StackPanel Grid.Column="1">
@@ -622,6 +631,31 @@
                             <StackPanel Grid.Column="2">
                                 <TextBlock Text="Free space" Style="{StaticResource LabelText}" />
                                 <TextBlock Text="{Binding SelectedDevice.FreeSizeDisplay, TargetNullValue=-}"
+                                           Style="{StaticResource ValueText}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="3" Grid.ColumnSpan="4" Margin="0,16,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Margin="0,0,18,0">
+                                <TextBlock Text="Hardware model" Style="{StaticResource LabelText}" />
+                                <TextBlock Text="{Binding SelectedDevice.ModelDisplay, TargetNullValue=-}"
+                                           Style="{StaticResource ValueText}"
+                                           TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,0,18,0">
+                                <TextBlock Text="Volume label" Style="{StaticResource LabelText}" />
+                                <TextBlock Text="{Binding SelectedDevice.VolumeLabelDisplay, TargetNullValue=-}"
+                                           Style="{StaticResource ValueText}"
+                                           TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Connection" Style="{StaticResource LabelText}" />
+                                <TextBlock Text="{Binding SelectedDevice.DeviceClassification, TargetNullValue=-}"
                                            Style="{StaticResource ValueText}" />
                             </StackPanel>
                         </Grid>
@@ -686,6 +720,7 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <TextBox Text="{Binding DestinationPath, UpdateSourceTrigger=PropertyChanged}"
+                                                 IsReadOnly="True"
                                                  ToolTip="This is the folder where recovered files will be saved. Use the computer or another physical drive; saving back to the damaged USB could overwrite files that are still recoverable." />
                                         <Button Grid.Column="1"
                                                 Content="Browse"

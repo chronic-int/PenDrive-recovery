@@ -79,6 +79,15 @@ public class RefreshStorageDevicesUseCaseTests
     {
         return new StorageDevice
         {
+            Identity = new StorageDeviceIdentity
+            {
+                PhysicalDiskNumber = diskNumber,
+                PhysicalDevicePath = physicalPath,
+                PnpDeviceId = $"TEST\\DISK{diskNumber}",
+                DeviceInstanceId = $"TEST\\DISK{diskNumber}",
+                Model = "Test USB",
+                CapacityBytes = 8_000_000_000
+            },
             PhysicalPath = physicalPath,
             DriveLetter = driveLetter,
             DiskNumber = diskNumber,
@@ -99,8 +108,9 @@ public class RefreshStorageDevicesUseCaseTests
 
         public int CallCount { get; private set; }
 
-        public Task<IEnumerable<StorageDevice>> GetRemovableDevicesAsync()
+        public Task<IEnumerable<StorageDevice>> GetRemovableDevicesAsync(CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             CallCount++;
             if (_responses.Count > 0)
             {

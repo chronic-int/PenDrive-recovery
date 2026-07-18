@@ -4,6 +4,7 @@ using System.Windows.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using PendriveRescue.App.Services;
 using PendriveRescue.App.ViewModels;
+using PendriveRescue.Application;
 using PendriveRescue.Application.UseCases;
 using PendriveRescue.Domain.Interfaces;
 using PendriveRescue.Infrastructure.Services;
@@ -50,7 +51,11 @@ public partial class App : System.Windows.Application
 
     private static void ConfigureServices(IServiceCollection services)
     {
+        services.AddSingleton<IWindowsPhysicalDiskProvider, WindowsPhysicalDiskProvider>();
         services.AddSingleton<IDeviceDetectionService, DeviceDetectionService>();
+        services.AddSingleton<IStorageDeviceIdentityService, StorageDeviceIdentityService>();
+        services.AddSingleton<IDeviceSafetyAuditService, DeviceSafetyAuditService>();
+        services.AddSingleton<IStorageDeviceOperationGuard, StorageDeviceOperationGuard>();
         services.AddSingleton<IDeviceDiagnosticService, DeviceDiagnosticService>();
         services.AddSingleton<IRawReadService, RawReadService>();
         services.AddSingleton<FileCarver>();
@@ -69,6 +74,7 @@ public partial class App : System.Windows.Application
         services.AddTransient<RunQuickScanUseCase>();
         services.AddTransient<RunDeepScanUseCase>();
         services.AddTransient<RecoverFilesUseCase>();
+        services.AddTransient<SelectRecoveryDestinationUseCase>();
         services.AddTransient<RepairFlashDriveUseCase>();
         services.AddTransient<TrySafeRepairUseCase>();
         services.AddTransient<CleanUsbMalwareArtifactsUseCase>();

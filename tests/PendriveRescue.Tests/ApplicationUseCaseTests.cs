@@ -30,7 +30,10 @@ public class ApplicationUseCaseTests
         var result = await useCase.ExecuteAsync(
             Array.Empty<RecoverableFile>(),
             new StorageDevice(),
-            "C:\\Recovered",
+            new RecoveryDestinationSelection(
+                "C:\\Recovered",
+                new StorageDeviceIdentity(),
+                DateTimeOffset.UtcNow),
             CancellationToken.None,
             new Progress<double>());
 
@@ -70,7 +73,7 @@ public class ApplicationUseCaseTests
         public Task<RecoveryJob> RecoverFilesAsync(
             IEnumerable<RecoverableFile> files,
             StorageDevice sourceDevice,
-            string destinationPath,
+            RecoveryDestinationSelection destination,
             CancellationToken cancellationToken,
             IProgress<double> progress)
         {

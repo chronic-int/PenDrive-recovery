@@ -53,6 +53,20 @@ public class FlashRepairServiceTests
     }
 
     [Fact]
+    public void ValidateRepairTarget_RejectsSystemDiskEvenWhenMarkedRemovable()
+    {
+        var device = new StorageDevice
+        {
+            DiskNumber = 2,
+            IsRemovable = true,
+            IsSystemDisk = true,
+            PhysicalPath = @"\\.\PHYSICALDRIVE2"
+        };
+
+        Assert.Throws<InvalidOperationException>(() => FlashRepairService.ValidateRepairTarget(device));
+    }
+
+    [Fact]
     public void BuildRepairScript_PrinterProfileUsesLimitedFat32PartitionOnLargeDrive()
     {
         var device = new StorageDevice
