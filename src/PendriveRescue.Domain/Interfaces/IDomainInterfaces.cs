@@ -5,7 +5,60 @@ namespace PendriveRescue.Domain.Interfaces;
 
 public interface IDeviceDetectionService
 {
-    Task<IEnumerable<StorageDevice>> GetRemovableDevicesAsync();
+    Task<IEnumerable<StorageDevice>> GetRemovableDevicesAsync(CancellationToken cancellationToken = default);
+}
+
+/// <summary>
+/// Resolves and compares physical storage identities. Implementations must return
+/// <see cref="DeviceIdentityMatch.Indeterminate"/> whenever the available evidence is ambiguous.
+/// </summary>
+public interface IStorageDeviceIdentityService
+{
+    /// <summary>Finds the currently connected device represented by an earlier identity snapshot.</summary>
+    Task<StorageDevice?> ResolveCurrentDeviceAsync(
+        StorageDeviceIdentity identity,
+        CancellationToken cancellationToken);
+
+    /// <summary>Compares physical disks without using a drive letter, label, model, or capacity alone.</summary>
+    DeviceIdentityMatch RepresentsSamePhysicalDisk(
+        StorageDeviceIdentity first,
+        StorageDeviceIdentity second);
+
+    /// <summary>Resolves an existing directory, including volume mount points and reparse targets, to its physical disk.</summary>
+    Task<StorageDeviceIdentity?> ResolvePathIdentityAsync(
+        string path,
+        CancellationToken cancellationToken);
+}
+
+/// <summary>
+/// Applies the central fail-closed policy immediately before disk-sensitive operations.
+/// </summary>
+public interface IStorageDeviceOperationGuard
+{
+    /// <summary>Re-enumerates and validates the selected physical disk for the requested operation.</summary>
+    Task<ValidatedStorageDevice> RevalidateAsync(
+        StorageDevice selectedDevice,
+        StorageOperationKind operation,
+        CancellationToken cancellationToken);
+
+    /// <summary>Validates the source disk and resolves the final destination directory to a different physical disk.</summary>
+    Task<ValidatedRecoveryTarget> ValidateRecoveryAsync(
+        StorageDevice selectedSource,
+        RecoveryDestinationSelection destination,
+        bool requiresMountedSource,
+        CancellationToken cancellationToken);
+}
+
+/// <summary>Writes privacy-conscious audit records for physical-disk safety decisions.</summary>
+public interface IDeviceSafetyAuditService
+{
+    void RecordValidation(StorageOperationKind operation, DeviceIdentityValidation validation);
+
+    void RecordDestinationValidation(
+        StorageDeviceIdentity source,
+        StorageDeviceIdentity? destination,
+        DeviceIdentityMatch outcome,
+        string reason);
 }
 
 /// <summary>
@@ -33,7 +86,7 @@ public interface IDeepScanService
 
 public interface IRecoveryService
 {
-    Task<RecoveryJob> RecoverFilesAsync(IEnumerable<RecoverableFile> files, StorageDevice sourceDevice, string destinationPath, CancellationToken cancellationToken, IProgress<double> progress);
+    Task<RecoveryJob> RecoverFilesAsync(IEnumerable<RecoverableFile> files, StorageDevice sourceDevice, RecoveryDestinationSelection destination, CancellationToken cancellationToken, IProgress<double> progress);
 }
 
 /// <summary>

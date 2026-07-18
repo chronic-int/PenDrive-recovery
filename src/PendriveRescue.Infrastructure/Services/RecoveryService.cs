@@ -7,40 +7,41 @@ namespace PendriveRescue.Infrastructure.Services;
 public class RecoveryService : IRecoveryService
 {
     private readonly IRawReadService _rawReadService;
+    private readonly IStorageDeviceOperationGuard _operationGuard;
 
-    public RecoveryService(IRawReadService rawReadService)
+    public RecoveryService(
+        IRawReadService rawReadService,
+        IStorageDeviceOperationGuard operationGuard)
     {
         _rawReadService = rawReadService;
+        _operationGuard = operationGuard;
     }
 
     public async Task<RecoveryJob> RecoverFilesAsync(
         IEnumerable<RecoverableFile> files, 
         StorageDevice sourceDevice, 
-        string destinationPath, 
+        RecoveryDestinationSelection destination,
         CancellationToken cancellationToken, 
         IProgress<double> progress)
     {
+        var sourceFiles = files.ToList();
+        var validatedTarget = await _operationGuard.ValidateRecoveryAsync(
+            sourceDevice,
+            destination,
+            sourceFiles.Any(file => file.StartOffset == -1),
+            cancellationToken);
+        sourceDevice = validatedTarget.Source.Device;
         var job = new RecoveryJob
         {
-            SourceFiles = files.ToList(),
-            DestinationPath = destinationPath,
+            SourceDeviceIdentity = sourceDevice.Identity,
+            DestinationDeviceIdentity = validatedTarget.DestinationIdentity,
+            IdentityValidation = validatedTarget.Source.Validation,
+            SourceFiles = sourceFiles,
+            DestinationPath = destination.Path,
             State = RecoveryState.Pending
         };
 
-        // Safety check: Don't recover to the same drive letter
-        string destDrive = Path.GetPathRoot(Path.GetFullPath(destinationPath))?.TrimEnd('\\') ?? string.Empty;
-        if (!string.IsNullOrWhiteSpace(sourceDevice.DriveLetter)
-            && destDrive.Equals(sourceDevice.DriveLetter, StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException("Cannot recover files to the source device drive.");
-        }
-
-        if (!Directory.Exists(destinationPath))
-        {
-            Directory.CreateDirectory(destinationPath);
-        }
-
-        EnsureDestinationHasSpace(destinationPath, job.SourceFiles);
+        EnsureDestinationHasSpace(destination.Path, job.SourceFiles);
 
         int totalFiles = job.SourceFiles.Count;
         if (totalFiles == 0)
@@ -58,7 +59,7 @@ public class RecoveryService : IRecoveryService
 
             try
             {
-                string targetFilePath = BuildUniqueOutputPath(destinationPath, file);
+                string targetFilePath = BuildUniqueOutputPath(destination.Path, file);
 
                 if (file.StartOffset == -1)
                 {

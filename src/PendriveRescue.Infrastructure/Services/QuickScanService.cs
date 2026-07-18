@@ -7,10 +7,24 @@ namespace PendriveRescue.Infrastructure.Services;
 
 public class QuickScanService : IQuickScanService
 {
+    private readonly IStorageDeviceOperationGuard _operationGuard;
+
+    public QuickScanService(IStorageDeviceOperationGuard operationGuard)
+    {
+        _operationGuard = operationGuard;
+    }
+
     public async Task<ScanResult> ScanAsync(StorageDevice device, CancellationToken cancellationToken, IProgress<double> progress)
     {
+        var validated = await _operationGuard.RevalidateAsync(device, StorageOperationKind.QuickScan, cancellationToken);
+        device = validated.Device;
         var sw = Stopwatch.StartNew();
-        var result = new ScanResult { Type = ScanType.Quick };
+        var result = new ScanResult
+        {
+            Type = ScanType.Quick,
+            SourceDeviceIdentity = device.Identity,
+            IdentityValidation = validated.Validation
+        };
 
         if (device.Status != DeviceHealthStatus.Healthy || string.IsNullOrWhiteSpace(device.DriveLetter))
         {

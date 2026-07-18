@@ -21,6 +21,8 @@ public sealed class FlashRepairOptions
 /// </summary>
 public sealed class FlashRepairResult
 {
+    public StorageDeviceIdentity? TargetIdentity { get; set; }
+    public DeviceIdentityValidation? IdentityValidation { get; set; }
     public bool Success { get; set; }
     public string Message { get; set; } = string.Empty;
     public string Output { get; set; } = string.Empty;
@@ -31,6 +33,8 @@ public sealed class FlashRepairResult
 /// </summary>
 public sealed class SafeRepairResult
 {
+    public StorageDeviceIdentity? TargetIdentity { get; set; }
+    public DeviceIdentityValidation? IdentityValidation { get; set; }
     public bool Success { get; set; }
     public string Message { get; set; } = string.Empty;
     public string Output { get; set; } = string.Empty;
@@ -64,6 +68,8 @@ public sealed class UsbCleanupOptions
 /// </summary>
 public sealed class UsbCleanupResult
 {
+    public StorageDeviceIdentity? TargetIdentity { get; set; }
+    public DeviceIdentityValidation? IdentityValidation { get; set; }
     public bool Success { get; set; }
     public int FilesMoved { get; set; }
     public int ItemsDeleted { get; set; }
@@ -83,6 +89,8 @@ public sealed class UsbCleanupResult
 /// </summary>
 public sealed class UsbProtectionResult
 {
+    public StorageDeviceIdentity? TargetIdentity { get; set; }
+    public DeviceIdentityValidation? IdentityValidation { get; set; }
     public bool Success { get; set; }
     public bool IsProtected { get; set; }
     public bool Changed { get; set; }
@@ -95,6 +103,8 @@ public sealed class UsbProtectionResult
 /// </summary>
 public sealed class MalwareScanResult
 {
+    public StorageDeviceIdentity? TargetIdentity { get; set; }
+    public DeviceIdentityValidation? IdentityValidation { get; set; }
     public bool Available { get; set; }
     public bool Success { get; set; }
     public bool RequiresAction { get; set; }

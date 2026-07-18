@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using PendriveRescue.Domain.Entities;
+using PendriveRescue.Domain.Enums;
 using PendriveRescue.Domain.Interfaces;
 
 namespace PendriveRescue.Infrastructure.Services;
@@ -11,11 +12,23 @@ namespace PendriveRescue.Infrastructure.Services;
 /// </summary>
 public class SafeFlashRepairService : ISafeFlashRepairService
 {
+    private readonly IStorageDeviceOperationGuard _operationGuard;
+
+    public SafeFlashRepairService(IStorageDeviceOperationGuard operationGuard)
+    {
+        _operationGuard = operationGuard;
+    }
+
     public async Task<SafeRepairResult> TryRepairAsync(
         StorageDevice device,
         CancellationToken cancellationToken,
         IProgress<double> progress)
     {
+        var validated = await _operationGuard.RevalidateAsync(
+            device,
+            StorageOperationKind.SafeRepair,
+            cancellationToken);
+        device = validated.Device;
         ValidateSafeRepairTarget(device);
         progress.Report(5);
 
@@ -43,6 +56,8 @@ public class SafeFlashRepairService : ISafeFlashRepairService
         var combinedOutput = output.ToString();
         return new SafeRepairResult
         {
+            TargetIdentity = device.Identity,
+            IdentityValidation = validated.Validation,
             Success = !combinedOutput.Contains("DiskPart has encountered an error", StringComparison.OrdinalIgnoreCase),
             Message = "Safe repair attempt completed. Refresh devices and check whether Windows mounted the drive.",
             Output = combinedOutput
@@ -96,6 +111,15 @@ public class SafeFlashRepairService : ISafeFlashRepairService
         if (string.IsNullOrWhiteSpace(device.PhysicalPath))
         {
             throw new InvalidOperationException("Safe repair is blocked because the selected device has no physical disk path.");
+        }
+
+        if (device.IsSystemDisk
+            || device.IsBootDisk
+            || device.ContainsPageFile
+            || device.ContainsCrashDump
+            || device.ContainsHibernationFile)
+        {
+            throw new InvalidOperationException("Safe repair is blocked because the selected disk contains protected Windows system data.");
         }
     }
 

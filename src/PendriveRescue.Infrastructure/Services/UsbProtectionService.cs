@@ -1,4 +1,5 @@
 using PendriveRescue.Domain.Entities;
+using PendriveRescue.Domain.Enums;
 using PendriveRescue.Domain.Interfaces;
 
 namespace PendriveRescue.Infrastructure.Services;
@@ -8,12 +9,23 @@ public sealed class UsbProtectionService : IUsbProtectionService
     private const string AutorunDirectoryName = "autorun.inf";
     private const string MarkerFileName = ".pendrive-rescue-protection";
     private const string MarkerContents = "Pendrive Rescue AutoRun protection\r\nVersion=1\r\n";
+    private readonly IStorageDeviceOperationGuard _operationGuard;
 
-    public Task<bool> IsProtectedAsync(StorageDevice device, CancellationToken cancellationToken)
+    public UsbProtectionService(IStorageDeviceOperationGuard operationGuard)
     {
+        _operationGuard = operationGuard;
+    }
+
+    public async Task<bool> IsProtectedAsync(StorageDevice device, CancellationToken cancellationToken)
+    {
+        var validated = await _operationGuard.RevalidateAsync(
+            device,
+            StorageOperationKind.UsbProtectionRead,
+            cancellationToken);
+        device = validated.Device;
         ValidateTarget(device);
 
-        return Task.Run(() =>
+        return await Task.Run(() =>
         {
             cancellationToken.ThrowIfCancellationRequested();
             var autorunDirectory = Path.Combine(GetDriveRoot(device), AutorunDirectoryName);
@@ -21,16 +33,25 @@ public sealed class UsbProtectionService : IUsbProtectionService
         }, cancellationToken);
     }
 
-    public Task<UsbProtectionResult> EnableAsync(
+    public async Task<UsbProtectionResult> EnableAsync(
         StorageDevice device,
         CancellationToken cancellationToken,
         IProgress<double> progress)
     {
+        var validated = await _operationGuard.RevalidateAsync(
+            device,
+            StorageOperationKind.UsbProtectionChange,
+            cancellationToken);
+        device = validated.Device;
         ValidateTarget(device);
 
-        return Task.Run(() =>
+        return await Task.Run(() =>
         {
-            var result = new UsbProtectionResult();
+            var result = new UsbProtectionResult
+            {
+                TargetIdentity = device.Identity,
+                IdentityValidation = validated.Validation
+            };
             var autorunDirectory = Path.Combine(GetDriveRoot(device), AutorunDirectoryName);
             var markerPath = Path.Combine(autorunDirectory, MarkerFileName);
 
@@ -89,16 +110,25 @@ public sealed class UsbProtectionService : IUsbProtectionService
         }, cancellationToken);
     }
 
-    public Task<UsbProtectionResult> DisableAsync(
+    public async Task<UsbProtectionResult> DisableAsync(
         StorageDevice device,
         CancellationToken cancellationToken,
         IProgress<double> progress)
     {
+        var validated = await _operationGuard.RevalidateAsync(
+            device,
+            StorageOperationKind.UsbProtectionChange,
+            cancellationToken);
+        device = validated.Device;
         ValidateTarget(device);
 
-        return Task.Run(() =>
+        return await Task.Run(() =>
         {
-            var result = new UsbProtectionResult();
+            var result = new UsbProtectionResult
+            {
+                TargetIdentity = device.Identity,
+                IdentityValidation = validated.Validation
+            };
             var autorunDirectory = Path.Combine(GetDriveRoot(device), AutorunDirectoryName);
             var markerPath = Path.Combine(autorunDirectory, MarkerFileName);
 

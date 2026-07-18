@@ -18,6 +18,7 @@ public partial class MainViewModel : ObservableObject
     private readonly RunQuickScanUseCase _runQuickScanUseCase;
     private readonly RunDeepScanUseCase _runDeepScanUseCase;
     private readonly RecoverFilesUseCase _recoverFilesUseCase;
+    private readonly SelectRecoveryDestinationUseCase _selectRecoveryDestinationUseCase;
     private readonly RepairFlashDriveUseCase _repairFlashDriveUseCase;
     private readonly TrySafeRepairUseCase _trySafeRepairUseCase;
     private readonly CleanUsbMalwareArtifactsUseCase _cleanUsbMalwareArtifactsUseCase;
@@ -28,6 +29,7 @@ public partial class MainViewModel : ObservableObject
     private CancellationTokenSource? _operationCts;
     private ScanResult? _lastScanResult;
     private RecoveryJob? _lastRecoveryJob;
+    private RecoveryDestinationSelection? _recoveryDestinationSelection;
 
     public MainViewModel(
         RefreshStorageDevicesUseCase refreshStorageDevicesUseCase,
@@ -35,6 +37,7 @@ public partial class MainViewModel : ObservableObject
         RunQuickScanUseCase runQuickScanUseCase,
         RunDeepScanUseCase runDeepScanUseCase,
         RecoverFilesUseCase recoverFilesUseCase,
+        SelectRecoveryDestinationUseCase selectRecoveryDestinationUseCase,
         RepairFlashDriveUseCase repairFlashDriveUseCase,
         TrySafeRepairUseCase trySafeRepairUseCase,
         CleanUsbMalwareArtifactsUseCase cleanUsbMalwareArtifactsUseCase,
@@ -48,6 +51,7 @@ public partial class MainViewModel : ObservableObject
         _runQuickScanUseCase = runQuickScanUseCase;
         _runDeepScanUseCase = runDeepScanUseCase;
         _recoverFilesUseCase = recoverFilesUseCase;
+        _selectRecoveryDestinationUseCase = selectRecoveryDestinationUseCase;
         _repairFlashDriveUseCase = repairFlashDriveUseCase;
         _trySafeRepairUseCase = trySafeRepairUseCase;
         _cleanUsbMalwareArtifactsUseCase = cleanUsbMalwareArtifactsUseCase;
@@ -274,12 +278,17 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void BrowseDestination()
+    private async Task BrowseDestinationAsync()
     {
         var selectedPath = _folderPicker.PickFolder("Choose a destination folder on a different drive");
         if (!string.IsNullOrWhiteSpace(selectedPath))
         {
-            DestinationPath = selectedPath;
+            await RunOperationAsync("Verifying recovery destination", async ct =>
+            {
+                _recoveryDestinationSelection = await _selectRecoveryDestinationUseCase.ExecuteAsync(selectedPath, ct);
+                DestinationPath = _recoveryDestinationSelection.Path;
+                StatusMessage = "Recovery destination verified. It will be checked again before files are written.";
+            });
         }
     }
 
@@ -325,10 +334,11 @@ public partial class MainViewModel : ObservableObject
         await RunOperationAsync("Recovering files", async ct =>
         {
             var progress = new Progress<double>(value => Progress = value);
+            var destination = await ResolveRecoveryDestinationAsync(DestinationPath, ct);
             _lastRecoveryJob = await _recoverFilesUseCase.ExecuteAsync(
                 selectedFiles,
                 SelectedDevice,
-                DestinationPath,
+                destination,
                 ct,
                 progress);
 
@@ -760,16 +770,35 @@ public partial class MainViewModel : ObservableObject
         await RunOperationAsync("Recovering files", async ct =>
         {
             var progress = new Progress<double>(value => Progress = value);
+            var destination = await ResolveRecoveryDestinationAsync(targetFolder, ct);
             _lastRecoveryJob = await _recoverFilesUseCase.ExecuteAsync(
                 filesToRecover,
                 SelectedDevice,
-                targetFolder,
+                destination,
                 ct,
                 progress);
 
             var recovered = _lastRecoveryJob.SourceFiles.Count(file => file.State == Domain.Enums.RecoveryState.Recovered);
             StatusMessage = $"Recovery completed: {recovered}/{_lastRecoveryJob.SourceFiles.Count} file(s) recovered.";
         });
+    }
+
+    private async Task<RecoveryDestinationSelection> ResolveRecoveryDestinationAsync(
+        string path,
+        CancellationToken cancellationToken)
+    {
+        var fullPath = Path.GetFullPath(path);
+        if (_recoveryDestinationSelection is not null
+            && _recoveryDestinationSelection.Path.Equals(fullPath, StringComparison.OrdinalIgnoreCase))
+        {
+            return _recoveryDestinationSelection;
+        }
+
+        _recoveryDestinationSelection = await _selectRecoveryDestinationUseCase.ExecuteAsync(
+            fullPath,
+            cancellationToken);
+        DestinationPath = _recoveryDestinationSelection.Path;
+        return _recoveryDestinationSelection;
     }
 
     private async Task RunOperationAsync(string title, Func<CancellationToken, Task> operation)

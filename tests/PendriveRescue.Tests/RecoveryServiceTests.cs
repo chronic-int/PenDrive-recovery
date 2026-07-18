@@ -15,13 +15,14 @@ public class RecoveryServiceTests
         var destinationRoot = Path.Combine(root, "destination");
         var nestedSource = Path.Combine(sourceRoot, "nested");
         Directory.CreateDirectory(nestedSource);
+        Directory.CreateDirectory(destinationRoot);
 
         var sourceFile = Path.Combine(nestedSource, "photo.jpg");
         await File.WriteAllTextAsync(sourceFile, "image bytes");
 
         try
         {
-            var service = new RecoveryService(new FakeRawReadService());
+            var service = new RecoveryService(new FakeRawReadService(), new PassThroughStorageDeviceOperationGuard());
             var file = new RecoverableFile
             {
                 FileName = "photo",
@@ -35,7 +36,7 @@ public class RecoveryServiceTests
             var job = await service.RecoverFilesAsync(
                 new[] { file },
                 new StorageDevice { DriveLetter = "Z:" },
-                destinationRoot,
+                CreateDestination(destinationRoot),
                 CancellationToken.None,
                 new Progress<double>());
 
@@ -54,7 +55,12 @@ public class RecoveryServiceTests
     [Fact]
     public async Task RecoverFilesAsync_BlocksRecoveryToSourceDrive()
     {
-        var service = new RecoveryService(new FakeRawReadService());
+        var service = new RecoveryService(
+            new FakeRawReadService(),
+            new PassThroughStorageDeviceOperationGuard
+            {
+                RecoveryException = new InvalidOperationException("Cannot recover files to the source physical disk.")
+            });
         var destinationRoot = Path.Combine("Z:" + Path.DirectorySeparatorChar, "Recovered");
         var file = new RecoverableFile
         {
@@ -67,7 +73,7 @@ public class RecoveryServiceTests
             service.RecoverFilesAsync(
                 new[] { file },
                 new StorageDevice { DriveLetter = "Z:" },
-                destinationRoot,
+                CreateDestination(destinationRoot),
                 CancellationToken.None,
                 new Progress<double>()));
     }
@@ -87,7 +93,7 @@ public class RecoveryServiceTests
 
         try
         {
-            var service = new RecoveryService(new FakeRawReadService());
+            var service = new RecoveryService(new FakeRawReadService(), new PassThroughStorageDeviceOperationGuard());
             var file = new RecoverableFile
             {
                 FileName = "bad:name",
@@ -99,7 +105,7 @@ public class RecoveryServiceTests
             var job = await service.RecoverFilesAsync(
                 new[] { file },
                 new StorageDevice { DriveLetter = "Z:" },
-                destinationRoot,
+                CreateDestination(destinationRoot),
                 CancellationToken.None,
                 new Progress<double>());
 
@@ -118,7 +124,7 @@ public class RecoveryServiceTests
     [Fact]
     public async Task RecoverFilesAsync_HonorsCancellation()
     {
-        var service = new RecoveryService(new FakeRawReadService());
+        var service = new RecoveryService(new FakeRawReadService(), new PassThroughStorageDeviceOperationGuard());
         using var cts = new CancellationTokenSource();
         await cts.CancelAsync();
 
@@ -134,7 +140,7 @@ public class RecoveryServiceTests
             service.RecoverFilesAsync(
                 new[] { file },
                 new StorageDevice { DriveLetter = "Z:", PhysicalPath = @"\\.\PHYSICALDRIVE1" },
-                Path.Combine(Path.GetTempPath(), "PendriveRescueTests", Guid.NewGuid().ToString("N")),
+                CreateDestination(Path.Combine(Path.GetTempPath(), "PendriveRescueTests", Guid.NewGuid().ToString("N"))),
                 cts.Token,
                 new Progress<double>()));
     }
@@ -145,5 +151,20 @@ public class RecoveryServiceTests
         {
             return Task.FromResult(Array.Empty<byte>());
         }
+    }
+
+    private static RecoveryDestinationSelection CreateDestination(string path)
+    {
+        return new RecoveryDestinationSelection(
+            path,
+            new StorageDeviceIdentity
+            {
+                PhysicalDiskNumber = 999,
+                PhysicalDevicePath = @"\\.\PhysicalDrive999",
+                PnpDeviceId = "TEST\\DESTINATION",
+                Model = "Test destination",
+                CapacityBytes = 1
+            },
+            DateTimeOffset.UtcNow);
     }
 }

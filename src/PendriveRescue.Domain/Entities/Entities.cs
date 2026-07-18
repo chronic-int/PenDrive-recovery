@@ -6,7 +6,9 @@ namespace PendriveRescue.Domain.Entities;
 
 public class StorageDevice
 {
+    public StorageDeviceIdentity Identity { get; set; } = new();
     public string DisplayName { get; set; } = string.Empty;
+    public string VolumeLabel { get; set; } = string.Empty;
     public string DriveLetter { get; set; } = string.Empty;
     public string PhysicalPath { get; set; } = string.Empty;
     public int DiskNumber { get; set; } = -1;
@@ -17,7 +19,17 @@ public class StorageDevice
     public string FileSystem { get; set; } = string.Empty;
     public DeviceHealthStatus Status { get; set; }
     public bool IsRemovable { get; set; }
+    public bool IsUsbConnected { get; set; }
+    public bool IsSystemDisk { get; set; }
+    public bool IsBootDisk { get; set; }
+    public bool ContainsPageFile { get; set; }
+    public bool ContainsCrashDump { get; set; }
+    public bool ContainsHibernationFile { get; set; }
     public string DriveLetterDisplay => string.IsNullOrWhiteSpace(DriveLetter) ? "No drive letter" : DriveLetter;
+    public string VolumeLabelDisplay => string.IsNullOrWhiteSpace(VolumeLabel) ? "No label" : VolumeLabel;
+    public string ModelDisplay => string.IsNullOrWhiteSpace(Identity.Model) ? "Unknown model" : Identity.Model;
+    public string DiskNumberDisplay => DiskNumber < 0 ? "Unavailable" : $"Disk {DiskNumber}";
+    public string DeviceClassification => IsUsbConnected ? "USB device" : IsRemovable ? "Removable device" : "Fixed device";
     public string TotalSizeDisplay => FormatBytes(TotalBytes);
     public string FreeSizeDisplay => FormatBytes(FreeBytes);
 

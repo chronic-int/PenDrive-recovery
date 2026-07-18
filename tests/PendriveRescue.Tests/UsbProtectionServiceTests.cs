@@ -13,7 +13,7 @@ public class UsbProtectionServiceTests
 
         try
         {
-            var service = new UsbProtectionService();
+            var service = new UsbProtectionService(new PassThroughStorageDeviceOperationGuard());
             var device = CreateDevice(root);
 
             var enabled = await service.EnableAsync(
@@ -50,7 +50,7 @@ public class UsbProtectionServiceTests
 
         try
         {
-            var service = new UsbProtectionService();
+            var service = new UsbProtectionService(new PassThroughStorageDeviceOperationGuard());
             var device = CreateDevice(root);
 
             await service.EnableAsync(device, CancellationToken.None, new Progress<double>());
@@ -81,7 +81,7 @@ public class UsbProtectionServiceTests
 
         try
         {
-            var service = new UsbProtectionService();
+            var service = new UsbProtectionService(new PassThroughStorageDeviceOperationGuard());
             var device = CreateDevice(root);
 
             var enabled = await service.EnableAsync(device, CancellationToken.None, new Progress<double>());
@@ -103,7 +103,7 @@ public class UsbProtectionServiceTests
     [Fact]
     public async Task IsProtectedAsync_RejectsUnmountedDrive()
     {
-        var service = new UsbProtectionService();
+        var service = new UsbProtectionService(new PassThroughStorageDeviceOperationGuard());
         var device = new StorageDevice
         {
             IsRemovable = true,

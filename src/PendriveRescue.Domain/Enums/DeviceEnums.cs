@@ -9,6 +9,27 @@ public enum DeviceHealthStatus
     Unknown
 }
 
+public enum DeviceIdentityMatch
+{
+    Match,
+    Different,
+    Indeterminate
+}
+
+public enum StorageOperationKind
+{
+    Diagnostic,
+    QuickScan,
+    DeepScan,
+    Recovery,
+    MalwareScan,
+    MalwareCleanup,
+    UsbProtectionRead,
+    UsbProtectionChange,
+    SafeRepair,
+    DestructiveRepair
+}
+
 public enum RecoveryConfidence
 {
     High,
