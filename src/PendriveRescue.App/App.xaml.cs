@@ -56,6 +56,11 @@ public partial class App : System.Windows.Application
         services.AddSingleton<IStorageDeviceIdentityService, StorageDeviceIdentityService>();
         services.AddSingleton<IDeviceSafetyAuditService, DeviceSafetyAuditService>();
         services.AddSingleton<IStorageDeviceOperationGuard, StorageDeviceOperationGuard>();
+        services.AddSingleton(TimeProvider.System);
+        services.AddSingleton<IDeviceDiagnosticEvidenceCollector, WindowsDeviceDiagnosticEvidenceCollector>();
+        services.AddSingleton<IDeviceReadProbe, DeviceReadProbe>();
+        services.AddSingleton<IDeviceSecurityEvidenceProvider, DeviceSecurityEvidenceProvider>();
+        services.AddSingleton<IDeviceDiagnosticEngine, DeviceDiagnosticEngine>();
         services.AddSingleton<IDeviceDiagnosticService, DeviceDiagnosticService>();
         services.AddSingleton<IRawReadService, RawReadService>();
         services.AddSingleton<FileCarver>();

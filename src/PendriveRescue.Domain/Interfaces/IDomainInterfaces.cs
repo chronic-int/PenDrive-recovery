@@ -66,7 +66,41 @@ public interface IDeviceSafetyAuditService
 /// </summary>
 public interface IDeviceDiagnosticService
 {
-    Task<DeviceDiagnosticResult> AnalyzeAsync(StorageDevice device, CancellationToken cancellationToken, IProgress<double> progress);
+    Task<DeviceDiagnosticResult> AnalyzeAsync(
+        StorageDevice device,
+        CancellationToken cancellationToken,
+        IProgress<DeviceAnalysisProgress> progress);
+}
+
+public interface IDeviceDiagnosticEvidenceCollector
+{
+    Task<DeviceDiagnosticEvidence> CollectAsync(
+        ValidatedStorageDevice device,
+        CancellationToken cancellationToken);
+}
+
+public interface IDeviceReadProbe
+{
+    Task<DeviceReadProbeResult> ProbeAsync(
+        ValidatedStorageDevice device,
+        DeviceReadProbeOptions options,
+        CancellationToken cancellationToken);
+}
+
+public interface IDeviceSecurityEvidenceProvider
+{
+    Task<DeviceSecurityEvidence> CollectAsync(
+        ValidatedStorageDevice device,
+        CancellationToken cancellationToken);
+}
+
+public interface IDeviceDiagnosticEngine
+{
+    DeviceDiagnosticResult Evaluate(
+        Guid analysisId,
+        DateTimeOffset startedAtUtc,
+        DateTimeOffset completedAtUtc,
+        DeviceDiagnosticEvidence evidence);
 }
 
 public interface IRawReadService
@@ -156,4 +190,5 @@ public interface IReportService
 {
     Task<bool> ExportReportAsync(ScanResult result, string filePath);
     Task<bool> ExportReportAsync(RecoveryJob job, string filePath);
+    Task<bool> ExportReportAsync(DeviceDiagnosticResult result, string filePath);
 }

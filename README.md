@@ -67,16 +67,18 @@ flowchart LR
 
 | Feature | Use When | What It Does |
 | --- | --- | --- |
-| Analyze Problem | You are not sure what is wrong with the pendrive. | Checks device health signals and recommends the safest next step. |
+| Analyze Problem | You are not sure what is wrong with the pendrive. | Revalidates the physical USB, gathers read-only disk, partition, volume, bounded-read, and security evidence, then explains the likely condition, confidence, severity, limitations, and safest next steps. |
 | Quick Scan | The drive has a letter and Windows can read it. | Searches the mounted filesystem for recoverable files. |
 | Deep Scan | The drive is RAW, inaccessible, has no drive letter, or looks corrupted. | Reads the physical device in raw mode and carves files by known signatures. |
 | Recover Files | Scan results are available. | Copies selected files to a destination folder on another drive. |
-| Export Report | After a scan or recovery job. | Saves a JSON report with scan/recovery details. |
+| Export Report | After an analysis, scan, or recovery job. | Saves a privacy-safe JSON report with diagnostic findings or scan/recovery details. |
 | Normalize USB | Files are hidden or the drive contains shortcut-virus artifacts. | Restores attributes, quarantines scripts and launchers off the USB, preserves Windows metadata, and can run Defender before and after cleanup. |
 | Microsoft Defender | The USB may have been connected to an infected computer. | Runs a computer Quick Scan or a custom scan of the selected USB without launching files from it. |
 | AutoRun blocker | You want a basic additional barrier against older AutoRun techniques. | Occupies the `autorun.inf` path. It does not stop malware already running on a computer. |
 | Try Safe Repair | You already recovered important files and want a non-destructive repair attempt. | May clear read-only flags, assign a drive letter, and run CHKDSK when possible. |
 | Erase and Repair | You no longer need data from the pendrive. | Destructively creates one MBR partition using the selected exFAT or FAT32 profile. |
+
+Analyze is read-only and never starts scans, recovery, CHKDSK, formatting, cleanup, or repair automatically. Missing evidence remains explicitly unknown, and an unavailable low-level check produces an incomplete diagnosis instead of being treated as proof that the USB is healthy or physically damaged. The analysis panel keeps multiple findings visible, orders recommendations by safety, disables unsafe actions, and can export the same stable diagnostic codes shown on screen.
 
 ### File Types Recognized By Deep Scan
 

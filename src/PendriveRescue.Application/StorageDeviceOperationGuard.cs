@@ -11,10 +11,10 @@ namespace PendriveRescue.Application;
 public sealed class StorageDeviceOperationGuard : IStorageDeviceOperationGuard
 {
     public const string DeviceChangedMessage =
-        "The selected USB device has changed or is no longer connected. Refresh the device list and select the device again.";
+        StorageSafetyMessages.DeviceChanged;
 
     public const string IdentityIndeterminateMessage =
-        "Pendrive Rescue could not verify the physical identity of this disk safely. The operation was cancelled to protect your data.";
+        StorageSafetyMessages.IdentityIndeterminate;
 
     public const string SameDiskDestinationMessage =
         "The selected destination is located on the same physical disk as the source USB device. Choose a folder on a different physical disk to avoid overwriting recoverable data.";

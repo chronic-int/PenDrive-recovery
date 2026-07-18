@@ -21,4 +21,9 @@ public sealed class ExportReportUseCase
     {
         return _reportService.ExportReportAsync(job, filePath);
     }
+
+    public Task<bool> ExecuteAsync(DeviceDiagnosticResult result, string filePath)
+    {
+        return _reportService.ExportReportAsync(result, filePath);
+    }
 }

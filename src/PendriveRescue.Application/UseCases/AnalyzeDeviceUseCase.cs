@@ -15,7 +15,7 @@ public sealed class AnalyzeDeviceUseCase
     public Task<DeviceDiagnosticResult> ExecuteAsync(
         StorageDevice device,
         CancellationToken cancellationToken,
-        IProgress<double> progress)
+        IProgress<DeviceAnalysisProgress> progress)
     {
         return _deviceDiagnosticService.AnalyzeAsync(device, cancellationToken, progress);
     }
