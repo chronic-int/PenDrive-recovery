@@ -71,6 +71,115 @@ public class ReportService : IReportService
         }
     }
 
+    public async Task<bool> ExportReportAsync(DeviceDiagnosticResult result, string filePath)
+    {
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(filePath)) ?? ".");
+            var evidence = result.Evidence;
+            var report = new
+            {
+                ReportType = "DeviceDiagnostic",
+                CreatedAt = DateTimeOffset.Now,
+                result.AnalysisId,
+                result.StartedAtUtc,
+                result.CompletedAtUtc,
+                TargetDevice = ToDiagnosticReportIdentity(result.TargetIdentity),
+                result.PrimaryCondition,
+                result.Confidence,
+                result.Severity,
+                result.Title,
+                result.Summary,
+                result.AnalysisComplete,
+                result.RecoveryRecommendedFirst,
+                result.SafeRepairMayBeAppropriate,
+                result.DestructiveRepairMayBeAppropriate,
+                result.LikelyPhysicalDamage,
+                Findings = result.Findings.Select(finding => new
+                {
+                    finding.Code,
+                    finding.Condition,
+                    finding.Confidence,
+                    finding.Severity,
+                    finding.Title,
+                    finding.Explanation,
+                    finding.Evidence,
+                    finding.MissingEvidence,
+                    finding.RecommendedActions,
+                    finding.ActionsToAvoid,
+                    finding.RecoveryRecommendedFirst
+                }),
+                Evidence = new
+                {
+                    evidence.CollectedAtUtc,
+                    evidence.DevicePresent,
+                    evidence.IdentityRevalidated,
+                    evidence.FinalIdentityRevalidated,
+                    evidence.IdentityValidationReason,
+                    evidence.IsRemovable,
+                    evidence.IsSystemDisk,
+                    evidence.IsBootDisk,
+                    evidence.PhysicalDiskNumber,
+                    evidence.Model,
+                    evidence.BusType,
+                    evidence.ReportedDiskCapacityBytes,
+                    evidence.PartitionCount,
+                    evidence.PartitionMetadataAvailable,
+                    evidence.HasPartitionTable,
+                    evidence.HasAllocatedPartition,
+                    evidence.HasUnallocatedCapacity,
+                    evidence.HasVolume,
+                    evidence.HasMountedVolume,
+                    evidence.FileSystem,
+                    evidence.VolumeCapacityBytes,
+                    evidence.FreeSpaceBytes,
+                    evidence.VolumeMetadataAvailable,
+                    evidence.VolumeAccessible,
+                    evidence.RootDirectoryReadable,
+                    evidence.AccessFailureCategory,
+                    evidence.IsReadOnly,
+                    evidence.ReadOnlyEvidenceSource,
+                    evidence.IsOffline,
+                    evidence.IsNoMedia,
+                    evidence.IsRawFileSystem,
+                    evidence.FileSystemRecognized,
+                    evidence.ReadProbeAttempted,
+                    evidence.ReadProbeSucceeded,
+                    evidence.ReadProbeBytesRequested,
+                    evidence.ReadProbeBytesCompleted,
+                    evidence.ReadProbeDuration,
+                    evidence.ReadErrorCount,
+                    evidence.IoErrorCount,
+                    evidence.TimedOut,
+                    evidence.ReadProbeFailureCategory,
+                    evidence.DeviceDisconnectedDuringAnalysis,
+                    evidence.DeviceReappearedDuringAnalysis,
+                    evidence.IdentityChangedDuringAnalysis,
+                    evidence.SecurityEvidenceCollected,
+                    evidence.SuspiciousAutorunDetected,
+                    evidence.SuspiciousShortcutPatternDetected,
+                    evidence.SuspiciousLauncherCount,
+                    evidence.DefenderAvailable,
+                    evidence.DefenderThreatRequiresAction,
+                    evidence.CapacityEvidenceIsConsistent,
+                    evidence.CapacityEvidenceReason,
+                    evidence.CollectionWarnings
+                },
+                result.EvidenceSummary,
+                result.RecommendedActions,
+                result.ActionsToAvoid,
+                result.Limitations
+            };
+
+            await File.WriteAllTextAsync(filePath, JsonSerializer.Serialize(report, JsonOptions));
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     private static object? ToReportIdentity(StorageDeviceIdentity? identity)
     {
         if (identity is null)
@@ -101,6 +210,19 @@ public class ReportService : IReportService
                 validation.Reason,
                 validation.ValidatedAtUtc
             };
+    }
+
+    private static object ToDiagnosticReportIdentity(StorageDeviceIdentity identity)
+    {
+        return new
+        {
+            identity.PhysicalDiskNumber,
+            identity.Model,
+            identity.CapacityBytes,
+            identity.BusType,
+            SerialNumberHash = HashSerial(identity.SerialNumber),
+            PnpIdentityHash = HashSerial(identity.PnpDeviceId ?? identity.DeviceInstanceId)
+        };
     }
 
     private static string? HashSerial(string? serialNumber)

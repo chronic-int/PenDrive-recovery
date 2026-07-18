@@ -567,6 +567,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="360" />
                 </Grid.RowDefinitions>
 
@@ -709,7 +710,271 @@
                     </Grid>
                 </Border>
 
-                <Border Grid.Row="1" Style="{StaticResource Card}" Margin="0,0,0,14" Padding="16,12,16,14">
+                <Border Grid.Row="1"
+                        Style="{StaticResource Card}"
+                        Margin="0,0,0,14"
+                        Visibility="{Binding HasDiagnosticResult, Converter={StaticResource BoolToVisibility}}">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="Analysis Result"
+                                           Style="{StaticResource SectionTitle}" />
+                                <TextBlock Text="{Binding LastDiagnosticResult.Title, TargetNullValue=No analysis yet}"
+                                           Foreground="{StaticResource InkBrush}"
+                                           FontSize="20"
+                                           FontWeight="SemiBold"
+                                           Margin="0,8,0,0"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1"
+                                        HorizontalAlignment="Right">
+                                <TextBlock Foreground="{StaticResource AccentDarkBrush}"
+                                           FontWeight="SemiBold"
+                                           HorizontalAlignment="Right">
+                                    <Run Text="{Binding LastDiagnosticResult.SeverityDisplay, Mode=OneWay}" />
+                                    <Run Text=" / " />
+                                    <Run Text="{Binding LastDiagnosticResult.ConfidenceDisplay, Mode=OneWay}" />
+                                </TextBlock>
+                                <TextBlock Text="{Binding LastDiagnosticResult.AnalysisTimeDisplay, Mode=OneWay}"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           FontSize="12"
+                                           HorizontalAlignment="Right"
+                                           Margin="0,5,0,0" />
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Text="{Binding LastDiagnosticResult.Summary}"
+                                   Foreground="{StaticResource MutedBrush}"
+                                   FontSize="13"
+                                   LineHeight="20"
+                                   TextWrapping="Wrap"
+                                   Margin="0,12,0,0" />
+
+                        <Border Background="#FFF5E8"
+                                BorderBrush="#E7C78F"
+                                BorderThickness="1"
+                                CornerRadius="6"
+                                Padding="12,9"
+                                Margin="0,12,0,0"
+                                Visibility="{Binding LastDiagnosticResult.RecoveryRecommendedFirst, Converter={StaticResource BoolToVisibility}}">
+                            <TextBlock Text="Recover important files to another physical disk before attempting repair."
+                                       Foreground="#704E16"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       TextWrapping="Wrap" />
+                        </Border>
+
+                        <Grid Margin="0,16,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="1" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Margin="0,0,20,0">
+                                <TextBlock Text="Findings"
+                                           Foreground="{StaticResource InkBrush}"
+                                           FontSize="14"
+                                           FontWeight="SemiBold" />
+                                <ItemsControl ItemsSource="{Binding LastDiagnosticResult.Findings}"
+                                              Margin="0,9,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="{StaticResource BorderBrushSoft}"
+                                                    BorderThickness="0,0,0,1"
+                                                    Padding="0,0,0,10"
+                                                    Margin="0,0,0,10">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Title}"
+                                                               Foreground="{StaticResource InkBrush}"
+                                                               FontWeight="SemiBold"
+                                                               TextWrapping="Wrap" />
+                                                    <TextBlock Foreground="{StaticResource MutedBrush}"
+                                                               FontSize="11"
+                                                               Margin="0,3,0,0">
+                                                        <Run Text="{Binding Code, Mode=OneWay}" />
+                                                        <Run Text=" / " />
+                                                        <Run Text="{Binding Severity, Mode=OneWay}" />
+                                                        <Run Text=" / " />
+                                                        <Run Text="{Binding Confidence, Mode=OneWay}" />
+                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding Explanation}"
+                                                               Foreground="{StaticResource MutedBrush}"
+                                                               FontSize="12"
+                                                               LineHeight="18"
+                                                               Margin="0,5,0,0"
+                                                               TextWrapping="Wrap" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <TextBlock Text="Evidence collected"
+                                           Foreground="{StaticResource InkBrush}"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Margin="0,3,0,0" />
+                                <ItemsControl ItemsSource="{Binding LastDiagnosticResult.EvidenceSummary}"
+                                              Margin="0,8,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,0,0,7">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="16" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="-"
+                                                           Foreground="{StaticResource AccentBrush}" />
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding}"
+                                                           Foreground="{StaticResource MutedBrush}"
+                                                           FontSize="12"
+                                                           TextWrapping="Wrap" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+
+                            <Border Grid.Column="1"
+                                    Background="{StaticResource BorderBrushSoft}" />
+
+                            <StackPanel Grid.Column="2" Margin="20,0,0,0">
+                                <TextBlock Text="Recommended next steps"
+                                           Foreground="{StaticResource InkBrush}"
+                                           FontSize="14"
+                                           FontWeight="SemiBold" />
+                                <ItemsControl ItemsSource="{Binding LastDiagnosticResult.RecommendedActions}"
+                                              Margin="0,9,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,0,0,10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="28" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding Priority, StringFormat={}{0}.}"
+                                                           Foreground="{StaticResource AccentDarkBrush}"
+                                                           FontWeight="SemiBold" />
+                                                <StackPanel Grid.Column="1">
+                                                    <TextBlock Text="{Binding Title}"
+                                                               Foreground="{StaticResource InkBrush}"
+                                                               FontWeight="SemiBold"
+                                                               TextWrapping="Wrap" />
+                                                    <TextBlock Text="{Binding Reason}"
+                                                               Foreground="{StaticResource MutedBrush}"
+                                                               FontSize="12"
+                                                               Margin="0,3,0,0"
+                                                               TextWrapping="Wrap" />
+                                                    <TextBlock Text="{Binding DisabledReason}"
+                                                               Foreground="{StaticResource DangerBrush}"
+                                                               FontSize="12"
+                                                               Margin="0,3,0,0"
+                                                               TextWrapping="Wrap">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding Enabled}" Value="False">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </StackPanel>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <TextBlock Text="Avoid"
+                                           Foreground="{StaticResource InkBrush}"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Margin="0,4,0,0" />
+                                <ItemsControl ItemsSource="{Binding LastDiagnosticResult.ActionsToAvoid}"
+                                              Margin="0,8,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,0,0,7">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="16" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="!"
+                                                           Foreground="{StaticResource DangerBrush}"
+                                                           FontWeight="Bold" />
+                                                <TextBlock Grid.Column="1"
+                                                           Text="{Binding}"
+                                                           Foreground="{StaticResource MutedBrush}"
+                                                           FontSize="12"
+                                                           TextWrapping="Wrap" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <TextBlock Text="Limitations"
+                                           Foreground="{StaticResource InkBrush}"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Margin="0,6,0,0" />
+                                <ItemsControl ItemsSource="{Binding LastDiagnosticResult.Limitations}"
+                                              Margin="0,8,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}"
+                                                       Foreground="{StaticResource MutedBrush}"
+                                                       FontSize="12"
+                                                       TextWrapping="Wrap"
+                                                       Margin="0,0,0,7" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Grid>
+
+                        <Border Height="1"
+                                Background="{StaticResource BorderBrushSoft}"
+                                Margin="0,10,0,14" />
+                        <WrapPanel>
+                            <Button Content="Quick Scan"
+                                    Style="{StaticResource PrimaryButton}"
+                                    Command="{Binding QuickScanCommand}"
+                                    Visibility="{Binding HasDiagnosticQuickScanAction, Converter={StaticResource BoolToVisibility}}"
+                                    ToolTip="Run the normal filesystem scan recommended by this analysis." />
+                            <Button Content="Deep Scan"
+                                    Style="{StaticResource PrimaryButton}"
+                                    Command="{Binding DeepScanCommand}"
+                                    IsEnabled="{Binding DiagnosticDeepScanEnabled}"
+                                    Visibility="{Binding HasDiagnosticDeepScanAction, Converter={StaticResource BoolToVisibility}}"
+                                    ToolTip="{Binding DiagnosticDeepScanToolTip}" />
+                            <Button Content="Scan USB"
+                                    Style="{StaticResource PrimaryButton}"
+                                    Command="{Binding ScanUsbForMalwareCommand}"
+                                    Visibility="{Binding HasDiagnosticDefenderAction, Converter={StaticResource BoolToVisibility}}"
+                                    ToolTip="Run the explicit Microsoft Defender USB scan recommended by this analysis." />
+                            <Button Content="Safe Repair"
+                                    Style="{StaticResource CommandButton}"
+                                    Command="{Binding TrySafeRepairCommand}"
+                                    IsEnabled="{Binding DiagnosticSafeRepairEnabled}"
+                                    Visibility="{Binding HasDiagnosticSafeRepairAction, Converter={StaticResource BoolToVisibility}}"
+                                    ToolTip="{Binding DiagnosticSafeRepairToolTip}" />
+                            <Button Content="Export Analysis"
+                                    Style="{StaticResource CommandButton}"
+                                    Command="{Binding ExportDiagnosticReportCommand}"
+                                    ToolTip="Save this diagnosis, privacy-safe identity evidence, findings, recommendations, and limitations as JSON." />
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Row="2" Style="{StaticResource Card}" Margin="0,0,0,14" Padding="16,12,16,14">
                     <TabControl Style="{StaticResource WorkflowTabControl}"
                                 MinHeight="196">
                         <TabItem Header="Recovery"
@@ -921,7 +1186,7 @@
                     </TabControl>
                 </Border>
 
-                <Border Grid.Row="2" Style="{StaticResource Card}" MinHeight="300">
+                <Border Grid.Row="3" Style="{StaticResource Card}" MinHeight="300">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />

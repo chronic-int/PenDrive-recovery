@@ -2,6 +2,15 @@ using PendriveRescue.Domain.Enums;
 
 namespace PendriveRescue.Domain.Entities;
 
+public static class StorageSafetyMessages
+{
+    public const string DeviceChanged =
+        "The selected USB device has changed or is no longer connected. Refresh the device list and select the device again.";
+
+    public const string IdentityIndeterminate =
+        "Pendrive Rescue could not verify the physical identity of this disk safely. The operation was cancelled to protect your data.";
+}
+
 /// <summary>
 /// Immutable snapshot of the Windows physical disk that owns one or more volumes.
 /// Drive letters and mount points are descriptive only and are never sufficient identity by themselves.

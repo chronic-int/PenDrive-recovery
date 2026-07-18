@@ -100,6 +100,7 @@ public partial class MainViewModel : ObservableObject
     [NotifyCanExecuteChangedFor(nameof(TrySafeRepairCommand))]
     [NotifyCanExecuteChangedFor(nameof(RepairFlashDriveCommand))]
     [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ExportDiagnosticReportCommand))]
     private bool isBusy;
 
     [ObservableProperty]
@@ -127,6 +128,10 @@ public partial class MainViewModel : ObservableObject
     private string defenderStatus = "Microsoft Defender has not been checked.";
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(ExportDiagnosticReportCommand))]
+    private DeviceDiagnosticResult? lastDiagnosticResult;
+
+    [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(EnableUsbProtectionCommand))]
     [NotifyCanExecuteChangedFor(nameof(DisableUsbProtectionCommand))]
     private bool isUsbProtectionEnabled;
@@ -140,6 +145,28 @@ public partial class MainViewModel : ObservableObject
     public bool HasSelectedDevice => SelectedDevice is not null;
 
     public bool HasFiles => Files.Count > 0;
+
+    public bool HasDiagnosticResult => LastDiagnosticResult is not null;
+
+    public bool HasDiagnosticQuickScanAction => HasDiagnosticAction(Domain.Enums.DiagnosticActionKind.RunQuickScan);
+
+    public bool HasDiagnosticDeepScanAction => HasDiagnosticAction(Domain.Enums.DiagnosticActionKind.RunDeepScan);
+
+    public bool HasDiagnosticDefenderAction => HasDiagnosticAction(Domain.Enums.DiagnosticActionKind.RunDefenderUsbScan);
+
+    public bool HasDiagnosticSafeRepairAction => HasDiagnosticAction(Domain.Enums.DiagnosticActionKind.TrySafeRepair);
+
+    public bool DiagnosticSafeRepairEnabled => FindDiagnosticAction(Domain.Enums.DiagnosticActionKind.TrySafeRepair)?.Enabled == true;
+
+    public bool DiagnosticDeepScanEnabled => FindDiagnosticAction(Domain.Enums.DiagnosticActionKind.RunDeepScan)?.Enabled == true;
+
+    public string DiagnosticSafeRepairToolTip => FindDiagnosticAction(Domain.Enums.DiagnosticActionKind.TrySafeRepair) is { } action
+        ? action.Enabled ? action.Reason : action.DisabledReason
+        : "Safe Repair is not recommended by this analysis.";
+
+    public string DiagnosticDeepScanToolTip => FindDiagnosticAction(Domain.Enums.DiagnosticActionKind.RunDeepScan) is { } action
+        ? action.Enabled ? action.Reason : action.DisabledReason
+        : "Deep Scan is not recommended by this analysis.";
 
     public bool UseModernFullCapacityFormat
     {
@@ -167,6 +194,7 @@ public partial class MainViewModel : ObservableObject
     {
         ClearFiles();
         _lastScanResult = null;
+        LastDiagnosticResult = null;
         Progress = 0;
         StatusMessage = value is null
             ? "Select a removable drive to begin."
@@ -212,15 +240,30 @@ public partial class MainViewModel : ObservableObject
             var result = await _analyzeDeviceUseCase.ExecuteAsync(
                 SelectedDevice,
                 ct,
-                new Progress<double>(value => Progress = value));
+                new Progress<DeviceAnalysisProgress>(value =>
+                {
+                    Progress = value.Percentage;
+                    StatusMessage = value.Message;
+                }));
 
+            LastDiagnosticResult = result;
             StatusMessage = $"{result.Title}. {result.Recommendation}";
-            System.Windows.MessageBox.Show(
-                BuildDiagnosticMessage(result),
-                "Pendrive diagnosis",
-                MessageBoxButton.OK,
-                result.IsLikelyPhysicalDamage ? MessageBoxImage.Warning : MessageBoxImage.Information);
         });
+    }
+
+    partial void OnLastDiagnosticResultChanged(DeviceDiagnosticResult? value)
+    {
+        OnPropertyChanged(nameof(HasDiagnosticResult));
+        OnPropertyChanged(nameof(HasDiagnosticQuickScanAction));
+        OnPropertyChanged(nameof(HasDiagnosticDeepScanAction));
+        OnPropertyChanged(nameof(HasDiagnosticDefenderAction));
+        OnPropertyChanged(nameof(HasDiagnosticSafeRepairAction));
+        OnPropertyChanged(nameof(DiagnosticSafeRepairEnabled));
+        OnPropertyChanged(nameof(DiagnosticDeepScanEnabled));
+        OnPropertyChanged(nameof(DiagnosticSafeRepairToolTip));
+        OnPropertyChanged(nameof(DiagnosticDeepScanToolTip));
+        DeepScanCommand.NotifyCanExecuteChanged();
+        TrySafeRepairCommand.NotifyCanExecuteChanged();
     }
 
     [RelayCommand(CanExecute = nameof(CanScan))]
@@ -241,7 +284,7 @@ public partial class MainViewModel : ObservableObject
             _runQuickScanUseCase.ExecuteAsync(SelectedDevice, token, new Progress<double>(value => Progress = value)));
     }
 
-    [RelayCommand(CanExecute = nameof(CanScan))]
+    [RelayCommand(CanExecute = nameof(CanDeepScan))]
     private async Task DeepScanAsync()
     {
         if (SelectedDevice is null)
@@ -740,6 +783,24 @@ public partial class MainViewModel : ObservableObject
             : "There is no scan or recovery report to export yet.";
     }
 
+    [RelayCommand(CanExecute = nameof(CanExportDiagnosticReport))]
+    private async Task ExportDiagnosticReportAsync()
+    {
+        if (LastDiagnosticResult is null)
+        {
+            return;
+        }
+
+        var reportFolder = !string.IsNullOrWhiteSpace(DestinationPath)
+            ? DestinationPath
+            : Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        var reportPath = Path.Combine(reportFolder, $"PendriveDiagnostic_{DateTime.Now:yyyyMMdd_HHmmss}.json");
+        var exported = await _exportReportUseCase.ExecuteAsync(LastDiagnosticResult, reportPath);
+        StatusMessage = exported
+            ? $"Diagnostic report exported to {reportPath}."
+            : "The diagnostic report could not be exported.";
+    }
+
     private async Task RunScanAsync(string title, Func<CancellationToken, Task<ScanResult>> scan)
     {
         await RunOperationAsync(title, async ct =>
@@ -840,6 +901,9 @@ public partial class MainViewModel : ObservableObject
 
     private bool CanScan() => !IsBusy && SelectedDevice is not null;
 
+    private bool CanDeepScan() =>
+        CanScan() && FindDiagnosticAction(Domain.Enums.DiagnosticActionKind.RunDeepScan) is not { Enabled: false };
+
     private bool CanRecover() =>
         !IsBusy &&
         SelectedDevice is not null &&
@@ -875,7 +939,8 @@ public partial class MainViewModel : ObservableObject
         SelectedDevice is not null &&
         SelectedDevice.IsRemovable &&
         SelectedDevice.DiskNumber > 0 &&
-        !string.IsNullOrWhiteSpace(SelectedDevice.PhysicalPath);
+        !string.IsNullOrWhiteSpace(SelectedDevice.PhysicalPath) &&
+        FindDiagnosticAction(Domain.Enums.DiagnosticActionKind.TrySafeRepair) is not { Enabled: false };
 
     private bool CanRepairFlashDrive() =>
         !IsBusy &&
@@ -883,6 +948,8 @@ public partial class MainViewModel : ObservableObject
         SelectedDevice.IsRemovable &&
         SelectedDevice.DiskNumber > 0 &&
         !string.IsNullOrWhiteSpace(SelectedDevice.PhysicalPath);
+
+    private bool CanExportDiagnosticReport() => !IsBusy && LastDiagnosticResult is not null;
 
     private bool CanCancel() => IsBusy;
 
@@ -978,14 +1045,13 @@ public partial class MainViewModel : ObservableObject
         return result.Success ? "Last Defender scan completed" : "Defender scan failed";
     }
 
-    private static string BuildDiagnosticMessage(DeviceDiagnosticResult result)
+    private bool HasDiagnosticAction(Domain.Enums.DiagnosticActionKind kind)
     {
-        return
-            $"Problem: {result.Title}\n\n" +
-            $"Details: {result.Details}\n\n" +
-            $"Recommendation: {result.Recommendation}\n\n" +
-            $"Deep Scan suggested: {(result.ShouldUseDeepScan ? "Yes" : "No")}\n" +
-            $"Safe Repair possible: {(result.CanAttemptSafeRepair ? "Yes" : "No")}\n" +
-            $"Likely physical damage: {(result.IsLikelyPhysicalDamage ? "Yes" : "No")}";
+        return FindDiagnosticAction(kind) is not null;
+    }
+
+    private RecommendedDiagnosticAction? FindDiagnosticAction(Domain.Enums.DiagnosticActionKind kind)
+    {
+        return LastDiagnosticResult?.RecommendedActions.FirstOrDefault(action => action.Kind == kind);
     }
 }

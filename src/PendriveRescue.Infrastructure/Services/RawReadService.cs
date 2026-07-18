@@ -52,18 +52,27 @@ public class RawReadService : IRawReadService
 
             if (handle.IsInvalid)
             {
-                throw new IOException($"Could not open device {physicalPath}. Error: {Marshal.GetLastWin32Error()}");
+                var error = Marshal.GetLastWin32Error();
+                throw new IOException(
+                    $"Could not open device {physicalPath}. Error: {error}",
+                    HResultFromWin32(error));
             }
 
             if (!SetFilePointerEx(handle, offset, out _, 0)) // 0 = FILE_BEGIN
             {
-                throw new IOException($"Could not seek to offset {offset}. Error: {Marshal.GetLastWin32Error()}");
+                var error = Marshal.GetLastWin32Error();
+                throw new IOException(
+                    $"Could not seek to offset {offset}. Error: {error}",
+                    HResultFromWin32(error));
             }
 
             var buffer = new byte[blockSize];
             if (!ReadFile(handle, buffer, (uint)blockSize, out uint bytesRead, IntPtr.Zero))
             {
-                throw new IOException($"Could not read block from {physicalPath}. Error: {Marshal.GetLastWin32Error()}");
+                var error = Marshal.GetLastWin32Error();
+                throw new IOException(
+                    $"Could not read block from {physicalPath}. Error: {error}",
+                    HResultFromWin32(error));
             }
 
             if (bytesRead < blockSize)
@@ -75,5 +84,12 @@ public class RawReadService : IRawReadService
 
             return buffer;
         }, cancellationToken);
+    }
+
+    private static int HResultFromWin32(int error)
+    {
+        return error <= 0
+            ? error
+            : unchecked((int)(0x80070000u | (uint)error));
     }
 }
