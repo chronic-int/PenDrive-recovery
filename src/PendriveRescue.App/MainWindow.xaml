@@ -523,9 +523,9 @@
                                                    FontSize="12"
                                                    Margin="0,3,0,0"
                                                    TextWrapping="Wrap">
-                                            <Run Text="{Binding DeviceClassification}" />
+                                            <Run Text="{Binding DeviceClassification, Mode=OneWay}" />
                                             <Run Text=" | Label: " />
-                                            <Run Text="{Binding VolumeLabelDisplay}" />
+                                            <Run Text="{Binding VolumeLabelDisplay, Mode=OneWay}" />
                                         </TextBlock>
                                     </StackPanel>
                                 </Border>
