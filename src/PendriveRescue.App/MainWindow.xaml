@@ -82,6 +82,29 @@
             <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         </Style>
 
+        <Style x:Key="CapacityProgressBar" TargetType="ProgressBar">
+            <Setter Property="Height" Value="7" />
+            <Setter Property="Minimum" Value="0" />
+            <Setter Property="Maximum" Value="100" />
+            <Setter Property="Background" Value="#E4EBF0" />
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ProgressBar">
+                        <Grid ClipToBounds="True">
+                            <Border Background="{TemplateBinding Background}"
+                                    CornerRadius="4" />
+                            <Border x:Name="PART_Track" />
+                            <Border x:Name="PART_Indicator"
+                                    HorizontalAlignment="Left"
+                                    Background="{TemplateBinding Foreground}"
+                                    CornerRadius="4" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style x:Key="CommandButton" TargetType="Button">
             <Setter Property="MinHeight" Value="38" />
             <Setter Property="MinWidth" Value="108" />
@@ -553,23 +576,40 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.ColumnSpan="4"
-                                   Text="Selected Device"
-                                   Style="{StaticResource SectionTitle}"
-                                   Margin="0,0,0,14" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Selected Device"
+                                       Style="{StaticResource SectionTitle}" />
+                            <StackPanel Grid.Column="1"
+                                        Orientation="Horizontal"
+                                        VerticalAlignment="Center">
+                                <Ellipse Width="8"
+                                         Height="8"
+                                         Fill="{StaticResource AccentBrush}"
+                                         Margin="0,0,7,0" />
+                                <TextBlock Text="{Binding SelectedDevice.HealthStatusDisplay, TargetNullValue=No device selected}"
+                                           Foreground="{StaticResource AccentDarkBrush}"
+                                           FontSize="12"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center" />
+                                <Border Width="1"
+                                        Height="16"
+                                        Background="{StaticResource BorderBrushSoft}"
+                                        Margin="12,0" />
+                                <TextBlock Text="{Binding SelectedDevice.DeviceClassification, TargetNullValue=-}"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           FontSize="12"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Grid>
 
                         <Border Grid.Row="1"
-                                Grid.ColumnSpan="4"
-                                Grid.RowSpan="3"
+                                Grid.RowSpan="2"
                                 Panel.ZIndex="10"
                                 Background="#F8FBFD"
                                 BorderBrush="#D8E0E8"
@@ -591,72 +631,79 @@
                                        Foreground="{StaticResource MutedBrush}" />
                         </Border>
 
-                        <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,18,0">
-                            <TextBlock Text="Name" Style="{StaticResource LabelText}" />
-                            <TextBlock Text="{Binding SelectedDevice.DisplayName, TargetNullValue=-}"
-                                       Style="{StaticResource ValueText}" />
-                        </StackPanel>
-                        <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,18,0">
-                            <TextBlock Text="Drive letter" Style="{StaticResource LabelText}" />
-                            <TextBlock Text="{Binding SelectedDevice.DriveLetterDisplay, TargetNullValue=-}"
-                                       Style="{StaticResource ValueText}" />
-                        </StackPanel>
-                        <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,0,18,0">
-                            <TextBlock Text="File system" Style="{StaticResource LabelText}" />
-                            <TextBlock Text="{Binding SelectedDevice.FileSystem, TargetNullValue=-}"
-                                       Style="{StaticResource ValueText}" />
-                        </StackPanel>
-                        <StackPanel Grid.Row="1" Grid.Column="3">
-                            <TextBlock Text="Capacity" Style="{StaticResource LabelText}" />
-                            <TextBlock Text="{Binding SelectedDevice.TotalSizeDisplay, TargetNullValue=-}"
-                                       Style="{StaticResource ValueText}" />
-                        </StackPanel>
-
-                        <Grid Grid.Row="2" Grid.ColumnSpan="4" Margin="0,16,0,0">
+                        <Grid Grid.Row="1" Margin="0,18,0,18">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="130" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="160" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="36" />
+                                <ColumnDefinition Width="*" MinWidth="220" />
                             </Grid.ColumnDefinitions>
                             <StackPanel>
+                                <TextBlock Text="Hardware model" Style="{StaticResource LabelText}" />
+                                <TextBlock Text="{Binding SelectedDevice.ModelDisplay, TargetNullValue=-}"
+                                           Foreground="{StaticResource InkBrush}"
+                                           FontSize="19"
+                                           FontWeight="SemiBold"
+                                           TextTrimming="CharacterEllipsis" />
+                                <TextBlock Margin="0,8,0,0"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           FontSize="13"
+                                           TextTrimming="CharacterEllipsis">
+                                    <Run Text="Volume: " />
+                                    <Run Text="{Binding SelectedDevice.VolumeLabelDisplay, Mode=OneWay, TargetNullValue=-}" />
+                                </TextBlock>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Storage" Style="{StaticResource LabelText}" />
+                                    <TextBlock Grid.Column="1"
+                                               Text="{Binding SelectedDevice.TotalSizeDisplay, TargetNullValue=-}"
+                                               Style="{StaticResource ValueText}" />
+                                </Grid>
+                                <ProgressBar Value="{Binding SelectedDevice.UsedSpacePercentage, Mode=OneWay}"
+                                             Style="{StaticResource CapacityProgressBar}"
+                                             Margin="0,8,0,7"
+                                             ToolTip="Shows how much of the selected USB storage is currently in use." />
+                                <TextBlock Text="{Binding SelectedDevice.CapacitySummary, TargetNullValue=Capacity unavailable}"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           FontSize="12" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120" />
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.ColumnSpan="4"
+                                    Height="1"
+                                    Background="{StaticResource BorderBrushSoft}"
+                                    VerticalAlignment="Top" />
+                            <StackPanel Margin="0,14,18,0">
+                                <TextBlock Text="Drive letter" Style="{StaticResource LabelText}" />
+                                <TextBlock Text="{Binding SelectedDevice.DriveLetterDisplay, TargetNullValue=-}"
+                                           Style="{StaticResource ValueText}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,14,18,0">
+                                <TextBlock Text="File system" Style="{StaticResource LabelText}" />
+                                <TextBlock Text="{Binding SelectedDevice.FileSystem, TargetNullValue=-}"
+                                           Style="{StaticResource ValueText}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Margin="0,14,18,0">
                                 <TextBlock Text="Disk number" Style="{StaticResource LabelText}" />
                                 <TextBlock Text="{Binding SelectedDevice.DiskNumberDisplay, TargetNullValue=-}"
                                            Style="{StaticResource ValueText}" />
                             </StackPanel>
-                            <StackPanel Grid.Column="1">
+                            <StackPanel Grid.Column="3" Margin="0,14,0,0">
                                 <TextBlock Text="Physical path" Style="{StaticResource LabelText}" />
                                 <TextBlock Text="{Binding SelectedDevice.PhysicalPath, TargetNullValue=-}"
-                                           Style="{StaticResource ValueText}" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="2">
-                                <TextBlock Text="Free space" Style="{StaticResource LabelText}" />
-                                <TextBlock Text="{Binding SelectedDevice.FreeSizeDisplay, TargetNullValue=-}"
-                                           Style="{StaticResource ValueText}" />
-                            </StackPanel>
-                        </Grid>
-
-                        <Grid Grid.Row="3" Grid.ColumnSpan="4" Margin="0,16,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Margin="0,0,18,0">
-                                <TextBlock Text="Hardware model" Style="{StaticResource LabelText}" />
-                                <TextBlock Text="{Binding SelectedDevice.ModelDisplay, TargetNullValue=-}"
                                            Style="{StaticResource ValueText}"
-                                           TextTrimming="CharacterEllipsis" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="1" Margin="0,0,18,0">
-                                <TextBlock Text="Volume label" Style="{StaticResource LabelText}" />
-                                <TextBlock Text="{Binding SelectedDevice.VolumeLabelDisplay, TargetNullValue=-}"
-                                           Style="{StaticResource ValueText}"
-                                           TextTrimming="CharacterEllipsis" />
-                            </StackPanel>
-                            <StackPanel Grid.Column="2">
-                                <TextBlock Text="Connection" Style="{StaticResource LabelText}" />
-                                <TextBlock Text="{Binding SelectedDevice.DeviceClassification, TargetNullValue=-}"
-                                           Style="{StaticResource ValueText}" />
+                                           ToolTip="Windows physical-disk path used to verify the exact USB before repair or recovery operations." />
                             </StackPanel>
                         </Grid>
                     </Grid>

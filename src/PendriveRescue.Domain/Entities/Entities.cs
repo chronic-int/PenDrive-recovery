@@ -30,8 +30,22 @@ public class StorageDevice
     public string ModelDisplay => string.IsNullOrWhiteSpace(Identity.Model) ? "Unknown model" : Identity.Model;
     public string DiskNumberDisplay => DiskNumber < 0 ? "Unavailable" : $"Disk {DiskNumber}";
     public string DeviceClassification => IsUsbConnected ? "USB device" : IsRemovable ? "Removable device" : "Fixed device";
+    public string HealthStatusDisplay => Status switch
+    {
+        DeviceHealthStatus.Healthy => "Ready",
+        DeviceHealthStatus.Raw => "RAW file system",
+        DeviceHealthStatus.Inaccessible => "Inaccessible",
+        DeviceHealthStatus.Unmounted => "Not mounted",
+        _ => "Status unknown"
+    };
     public string TotalSizeDisplay => FormatBytes(TotalBytes);
     public string FreeSizeDisplay => FormatBytes(FreeBytes);
+    public string CapacitySummary => TotalBytes <= 0
+        ? "Capacity unavailable"
+        : $"{FormatBytesIncludingZero(Math.Clamp(FreeBytes, 0, TotalBytes))} free of {TotalSizeDisplay}";
+    public double UsedSpacePercentage => TotalBytes <= 0
+        ? 0
+        : Math.Clamp((double)(TotalBytes - Math.Clamp(FreeBytes, 0, TotalBytes)) / TotalBytes * 100, 0, 100);
 
     private static string FormatBytes(long bytes)
     {
@@ -50,6 +64,11 @@ public class StorageDevice
         }
 
         return $"{value:0.##} {units[unitIndex]}";
+    }
+
+    private static string FormatBytesIncludingZero(long bytes)
+    {
+        return bytes == 0 ? "0 B" : FormatBytes(bytes);
     }
 }
 
