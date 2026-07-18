@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
+using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 using PendriveRescue.Domain.Entities;
 using PendriveRescue.Domain.Enums;
@@ -35,6 +36,7 @@ public sealed class WindowsPhysicalDiskProvider : IWindowsPhysicalDiskProvider
     {
         var devices = new List<StorageDevice>();
         var pageFileRoots = GetPageFileRoots();
+        var crashDumpRoots = GetCrashDumpRoots();
         var systemRoot = Path.GetPathRoot(Environment.SystemDirectory)?.TrimEnd('\\') ?? string.Empty;
 
         using var searcher = new ManagementObjectSearcher(
@@ -75,6 +77,8 @@ public sealed class WindowsPhysicalDiskProvider : IWindowsPhysicalDiskProvider
                 mount.TrimEnd('\\').Equals(systemRoot, StringComparison.OrdinalIgnoreCase));
             var containsPageFile = mountPoints.Any(mount =>
                 pageFileRoots.Contains(mount.TrimEnd('\\')));
+            var containsCrashDump = mountPoints.Any(mount =>
+                crashDumpRoots.Contains(mount.TrimEnd('\\')));
 
             var identity = new StorageDeviceIdentity
             {
@@ -108,7 +112,7 @@ public sealed class WindowsPhysicalDiskProvider : IWindowsPhysicalDiskProvider
                 IsSystemDisk = storageFlags.IsSystem || containsSystemVolume,
                 IsBootDisk = storageFlags.IsBoot || containsSystemVolume,
                 ContainsPageFile = containsPageFile,
-                ContainsCrashDump = containsSystemVolume,
+                ContainsCrashDump = containsCrashDump,
                 ContainsHibernationFile = containsSystemVolume,
                 Status = GetStatus(volumes, primaryVolume?.FileSystem ?? "RAW/Unknown")
             });
@@ -161,6 +165,39 @@ public sealed class WindowsPhysicalDiskProvider : IWindowsPhysicalDiskProvider
             }
         }
         catch (ManagementException)
+        {
+        }
+
+        return roots;
+    }
+
+    private static HashSet<string> GetCrashDumpRoots()
+    {
+        var roots = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        try
+        {
+            using var crashControl = Registry.LocalMachine.OpenSubKey(
+                @"SYSTEM\CurrentControlSet\Control\CrashControl");
+            foreach (var valueName in new[] { "DumpFile", "DedicatedDumpFile", "MinidumpDir" })
+            {
+                var configuredPath = crashControl?.GetValue(valueName) as string;
+                if (string.IsNullOrWhiteSpace(configuredPath))
+                {
+                    continue;
+                }
+
+                var expandedPath = Environment.ExpandEnvironmentVariables(configuredPath);
+                var root = Path.GetPathRoot(expandedPath)?.TrimEnd('\\');
+                if (!string.IsNullOrWhiteSpace(root))
+                {
+                    roots.Add(root);
+                }
+            }
+        }
+        catch (System.Security.SecurityException)
+        {
+        }
+        catch (UnauthorizedAccessException)
         {
         }
 
